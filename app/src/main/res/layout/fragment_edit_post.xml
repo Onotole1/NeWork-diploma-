@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      tools:context=".ui.EditPostFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="start|top"
+            android:textSize="24sp"
+            android:hint="@string/post_input_text_hint"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:padding="@dimen/commonSpacingMedium"
+            tools:ignore="MissingConstraints"
+            tools:text="@tools:sample/lorem[50]" />
+
+        <FrameLayout
+            android:id="@+id/photoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+          <ImageView
+              android:id="@+id/photo"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:contentDescription="@string/description_photo"
+              tools:srcCompat="@tools:sample/avatars[2]" />
+
+          <Button
+              android:id="@+id/deletePhoto"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="bottom|center_horizontal"
+              android:text="@string/clear" />
+
+        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/audioContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+        <ImageView
+              android:id="@+id/audio"
+              android:layout_width="@dimen/commonSpacingXSLarge"
+              android:layout_height="@dimen/commonSpacingXSLarge"
+              android:contentDescription="@string/description_audio"
+              android:src="@drawable/ic_music"
+            android:layout_gravity="bottom|center_horizontal"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent" />
+
+          <Button
+              android:id="@+id/deleteMusic"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="bottom|center_horizontal"
+              android:text="@string/clear" />
+        </FrameLayout>
+      </LinearLayout>
+
+    </ScrollView>
+
+  <LinearLayout
+      android:id="@+id/bottomAppBar"
+      style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom">
+
+    <ImageView
+        android:id="@+id/pickPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/description_pick_photo"
+        android:padding="@dimen/commonSpacingMedium"
+        android:src="@drawable/ic_attach_file_48" />
+
+
+    <ImageView
+        android:id="@+id/description_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/description_take_photo"
+        android:padding="@dimen/commonSpacingMedium"
+        android:src="@drawable/ic_baseline_photo_camera_48" />
+
+    <ImageView
+        android:id="@+id/takeMedia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/description_take_media"
+        android:padding="@dimen/commonSpacingMedium"
+        android:src="@drawable/ic_music" />
+
+    <ImageView
+        android:id="@+id/editLocation"
+        android:background="?selectableItemBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/location"
+        android:padding="@dimen/commonSpacingMedium"
+        android:src="@drawable/ic_location" />
+
+    <ImageView
+        android:id="@+id/editMentions"
+        android:background="?selectableItemBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/mentions"
+        android:padding="@dimen/commonSpacingMedium"
+        android:src="@drawable/ic_email" />
+  </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

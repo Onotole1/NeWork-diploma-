@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.EditEventFragment">
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+      <TableRow
+          android:id="@+id/tableRowDate"
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/commonSpacingXLarge"
+          android:layout_margin="@dimen/marginEnd"
+          android:orientation="vertical"
+          app:layout_constraintTop_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="@dimen/commonSpacingXSLarge"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/date" />
+
+        <EditText
+            android:id="@+id/date_edit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:importantForAutofill="no"
+            android:longClickable="false"
+            android:textSize="@dimen/editTextSize"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="LabelFor,TextFields"
+             />
+      </TableRow>
+
+      <TableRow
+          android:id="@+id/tableRowDateTime"
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/commonSpacingXLarge"
+          android:layout_margin="@dimen/marginEnd"
+          android:orientation="vertical"
+          app:layout_constraintTop_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/time"
+            android:gravity="center_vertical"
+            android:layout_width="@dimen/commonSpacingXSLarge"
+            android:layout_height="@dimen/commonSpacingSLarge"
+            android:text="@string/time" />
+
+        <EditText
+            android:id="@+id/time_edit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:importantForAutofill="no"
+            android:longClickable="false"
+            app:layout_constraintTop_toBottomOf="parent"
+            tools:ignore="LabelFor,TextFields" />
+      </TableRow>
+
+      <TableRow
+          android:id="@+id/tableRowFormat"
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/commonSpacingXLarge"
+          android:layout_margin="@dimen/marginEnd"
+          android:orientation="vertical"
+          app:layout_constraintTop_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/format"
+            android:layout_width="@dimen/commonSpacingXSLarge"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/format_event" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            app:layout_constraintTop_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dropDownSelector = "?attr/listChoiceBackgroundIndicator"
+            android:layout_marginStart="0dp"
+            />
+      </TableRow>
+
+      <TableRow
+          android:id="@+id/tableRowLink"
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/commonSpacingXLarge"
+          android:layout_margin="@dimen/marginEnd"
+          android:orientation="vertical"
+          app:layout_constraintTop_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/link"
+            android:layout_width="@dimen/commonSpacingXSLarge"
+            android:layout_height="@dimen/commonSpacingXLarge"
+            android:gravity="center_vertical"
+            android:text="@string/link_event" />
+
+        <EditText
+            android:id="@+id/link_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            android:inputType="textUri"
+            app:layout_constraintTop_toBottomOf="parent"
+            tools:ignore="LabelFor" />
+      </TableRow>
+
+      <TableRow
+          android:id="@+id/tableRowCoord"
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/commonSpacingXLarge"
+          android:layout_margin="@dimen/marginEnd"
+          android:orientation="vertical"
+          android:visibility="visible">
+
+        <TextView
+            android:id="@+id/coord"
+            android:layout_width="@dimen/commonSpacingXSLarge"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/event_location" />
+
+        <EditText
+            android:id="@+id/coord_edit"
+            android:layout_width="@dimen/commonSpacingColum"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor,TextFields"
+            app:layout_constraintEnd_toStartOf="@id/editLocation"
+
+            />
+
+        <ImageButton
+            android:id="@+id/editLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/location"
+            android:src="@drawable/ic_location"/>
+      </TableRow>
+
+      <TableRow
+          android:id="@+id/tableRowSpeakers"
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/commonSpacingXLarge"
+          android:layout_margin="@dimen/marginEnd"
+          android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/speakers"
+            android:layout_width="@dimen/commonSpacingXSLarge"
+            android:layout_height="@dimen/commonSpacingXLarge"
+            android:gravity="center_vertical"
+            android:text="@string/speakers" />
+
+        <EditText
+            android:id="@+id/speakers_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:focusable="false"
+            android:longClickable="false"
+            android:cursorVisible="false"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor,TextFields" />
+
+      </TableRow>
+
+
+      <EditText
+          android:id="@+id/edit"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:gravity="start|top"
+          android:hint="@string/post_input_text_hint"
+          android:importantForAutofill="no"
+          android:inputType="textMultiLine"
+          android:padding="@dimen/commonSpacingMedium"
+          android:textSize="@dimen/textSize"
+          tools:ignore="MissingConstraints"
+          tools:text="@tools:sample/lorem[50]" />
+
+      <FrameLayout
+          android:id="@+id/photoLayout"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:visibility="gone"
+          tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/description_photo"
+            tools:srcCompat="@tools:sample/avatars[2]" />
+
+        <Button
+            android:id="@+id/deletePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:text="@string/clear" />
+
+      </FrameLayout>
+      <FrameLayout
+          android:id="@+id/audioContainer"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:visibility="gone"
+          tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/audio"
+            android:layout_width="@dimen/commonSpacingXSLarge"
+            android:layout_height="@dimen/commonSpacingXSLarge"
+            android:contentDescription="@string/description_audio"
+            android:src="@drawable/ic_music"
+            android:layout_gravity="bottom|center_horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/deleteMusic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:text="@string/clear" />
+      </FrameLayout>
+    </LinearLayout>
+
+  </ScrollView>
+
+  <LinearLayout
+      android:id="@+id/bottomAppBar"
+      style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toBottomOf="parent"
+      android:layout_gravity="bottom">
+
+    <ImageView
+        android:id="@+id/pickPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/description_pick_photo"
+        android:padding="@dimen/commonSpacingMedium"
+        android:src="@drawable/ic_attach_file_48" />
+
+
+    <ImageView
+        android:id="@+id/description_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/description_take_photo"
+        android:padding="@dimen/commonSpacingMedium"
+        android:src="@drawable/ic_baseline_photo_camera_48" />
+
+    <ImageView
+        android:id="@+id/takeMedia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/description_take_media"
+        android:padding="@dimen/commonSpacingMedium"
+        android:src="@drawable/ic_music" />
+
+  </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

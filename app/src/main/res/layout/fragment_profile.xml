@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".ui.ProfileFragment">
+
+    <LinearLayout
+         android:id="@+id/linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+            android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/commonSpacingLarge">
+
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="@dimen/commonSpacingXSLarge"
+                android:layout_height="@dimen/commonSpacingXSLarge"
+                android:contentDescription="@string/avatar_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/user_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/ic_netology"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif"
+                android:singleLine="true"
+                android:textSize="@dimen/textSize"
+                android:textStyle="bold"
+                android:gravity="center_horizontal|center_vertical"
+                app:layout_constraintBottom_toBottomOf="@id/avatar"
+                app:layout_constraintStart_toEndOf="@id/avatar"
+                app:layout_constraintEnd_toStartOf="@+id/menu"
+                app:layout_constraintTop_toTopOf="@+id/avatar"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="@string/user_name" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonLogout"
+            style="@style/Widget.AppCompat.ElementsPostCard"
+            android:layout_width="@dimen/menuButtonSize"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/commonSpacingMedium"
+            android:layout_marginEnd="@dimen/commonSpacingMedium"
+            android:contentDescription="@string/logout"
+            android:gravity="center_horizontal|center_vertical"
+            app:icon="@drawable/ic_login_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/avatar"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/menu"
+            style="@style/Widget.AppTheme.CheckButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/commonSpacingMedium"
+            android:contentDescription="@string/menu"
+            android:gravity="center_horizontal|center_vertical"
+            app:icon="@drawable/ic_menu_24"
+            app:layout_constraintEnd_toStartOf="@+id/buttonLogout"
+            app:layout_constraintTop_toTopOf="@+id/avatar"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:ignore="DuplicateClickableBoundsCheck">
+
+        </com.google.android.material.button.MaterialButton>
+
+        <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="avatar,buttonLogout,user_name" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/_light_grey"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/work"
+            android:textAllCaps="true"
+            app:layout_constraintTop_toBottomOf="@id/barrier" />
+        <TextView
+            android:id="@+id/emptyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/emptyJobs"
+            android:visibility="gone"
+            android:gravity="center"
+            android:layout_weight="0.5"
+            />
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/listJobs"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/card_job" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/_light_grey"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/posts"
+            android:textAllCaps="true" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/listPost"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/card_post" />
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

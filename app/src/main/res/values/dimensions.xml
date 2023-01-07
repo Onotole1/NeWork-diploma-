@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="postAvatarSize">48dp</dimen>
+
+    <dimen name="height_image_ad">300dp</dimen>
+
+    <dimen name="margin">16dp</dimen>
+    <dimen name="marginStart">20dp</dimen>
+    <dimen name="marginEnd">8dp</dimen>
+
+    <dimen name="commonSpacingSmall">4dp</dimen>
+    <dimen name="commonSpacingMedium">8dp</dimen>
+    <dimen name="commonSpacingLarge">16dp</dimen>
+    <dimen name="commonSpacingSLarge">32dp</dimen>
+    <dimen name="commonSpacingXLarge">48dp</dimen>
+    <dimen name="commonSpacingXSLarge">64dp</dimen>
+    <dimen name="commonSpacingXXSLarge">72dp</dimen>
+    <dimen name="commonSpacingXXLarge">96dp</dimen>
+    <dimen name="commonSpacingColum">250dp</dimen>
+
+    <dimen name="iconButtonMinSize">48dp</dimen>
+    <dimen name="menuButtonSize">32dp</dimen>
+
+    <dimen name="textSpacing">8dp</dimen>
+    <dimen name="editTextSize">12sp</dimen>
+    <dimen name="textSize">16sp</dimen>
+
+
+</resources>

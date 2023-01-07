@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/editEventFragment">
+
+    <fragment
+        android:id="@+id/editEventFragment"
+        android:name="ru.netology.nework.ui.EditEventFragment"
+        android:label="fragment_edit_event"
+        tools:layout="@layout/fragment_edit_event" />
+    <fragment
+        android:id="@+id/editJobFragment"
+        android:name="ru.netology.nework.ui.EditJobFragment"
+        android:label="fragment_edit_job"
+        tools:layout="@layout/fragment_edit_job" />
+    <fragment
+        android:id="@+id/editPostFragment"
+        android:name="ru.netology.nework.ui.EditPostFragment"
+        android:label="fragment_edit_post"
+        tools:layout="@layout/fragment_edit_post" />
+    <fragment
+        android:id="@+id/imageFragment"
+        android:name="ru.netology.nework.ui.ImageFragment"
+        android:label="fragment_image"
+        tools:layout="@layout/fragment_image" />
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="ru.netology.nework.ui.SignInFragment"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="ru.netology.nework.ui.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUpFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+    <activity
+        android:id="@+id/intentHandlerActivity"
+        android:name="ru.netology.nework.ui.IntentHandlerActivity"
+        android:label="activity_intent_handler"
+        tools:layout="@layout/activity_intent_handler" />
+</navigation>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/my_object_menu">
+        <item
+            android:id="@+id/object_remove"
+            android:title="@string/obj_remove" />
+
+        <item
+            android:id="@+id/object_edit"
+            android:title="@string/obj_edit" />
+    </group>
+
+    <group android:id="@+id/other_object_menu">
+        <item
+            android:id="@+id/object_hide"
+            android:title="@string/obj_hide" />
+    </group>
+</menu>
