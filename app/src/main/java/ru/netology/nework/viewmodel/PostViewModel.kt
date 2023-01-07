@@ -1,4 +1,4 @@
-package ru.netology.nmedia.viewmodel
+package ru.netology.nework.viewmodel
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -13,17 +13,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import ru.netology.nmedia.R
-import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.dto.*
-import ru.netology.nmedia.enumeration.AttachmentType
-import ru.netology.nmedia.enumeration.SeparatorTimeType
-import ru.netology.nmedia.hiltModules.CurrentTime
-import ru.netology.nmedia.model.FeedModelState
-import ru.netology.nmedia.model.PhotoModel
-import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.util.RetryTypes
-import ru.netology.nmedia.util.SingleLiveEvent
+import ru.netology.nework.dto.Post
+
 import java.io.File
 import java.text.SimpleDateFormat
 import javax.inject.Inject

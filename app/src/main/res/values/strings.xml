@@ -47,6 +47,7 @@
     <string name="emptyJobs">empty Jobs</string>
     <string name="avatar_post">Avatar post</string>
     <string name="event_name">Event name</string>
+    <string name="event">Event</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_up">Sign up</string>
     <string name="sign_out">Sign out</string>

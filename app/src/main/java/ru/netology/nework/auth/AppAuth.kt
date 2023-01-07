@@ -1,4 +1,4 @@
-package ru.netology.nmedia.auth
+package ru.netology.nework.auth
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -16,7 +16,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import ru.netology.nmedia.api.ApiService
+import ru.netology.nework.api.ApiService
+import ru.netology.nework.dto.PushToken
+
+
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/thisPost"
         android:layout_width="match_parent"
@@ -105,11 +104,11 @@
             android:text="@string/mentors"
             android:textStyle="bold"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@id/coord"
+            app:layout_constraintBottom_toTopOf="@id/coordinates"
             app:layout_constraintStart_toStartOf="@id/content"
             app:layout_constraintTop_toBottomOf="@id/content" />
         <TextView
-            android:id="@+id/mentors_edit"
+            android:id="@+id/mentorsEdit"
             android:layout_width="@dimen/commonSpacingColum"
             android:layout_height="@dimen/commonSpacingSLarge"
             android:layout_marginStart="@dimen/marginStart"
@@ -130,12 +129,12 @@
             android:layout_height="@dimen/commonSpacingLarge"
             app:icon="@drawable/ic_more"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/mentors_edit"
-            app:layout_constraintStart_toEndOf="@+id/mentors_edit"
-            app:layout_constraintTop_toTopOf="@+id/mentors_edit" />
+            app:layout_constraintBottom_toBottomOf="@+id/mentorsEdit"
+            app:layout_constraintStart_toEndOf="@+id/mentorsEdit"
+            app:layout_constraintTop_toTopOf="@+id/mentorsEdit" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/coord"
+            android:id="@+id/coordinates"
             style="@style/Widget.AppTheme.CheckButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -165,7 +164,7 @@
             app:layout_constraintBottom_toTopOf="@id/downer_menu_barrier"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/coord"
+            app:layout_constraintTop_toBottomOf="@+id/coordinates"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <androidx.constraintlayout.widget.Barrier
@@ -187,8 +186,41 @@
             android:contentDescription="@string/like"
             app:icon="@drawable/ic_like_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/downer_menu_barrier"
-            tools:text="125" />
+            app:layout_constraintTop_toBottomOf="@+id/downer_menu_barrier" />
+
+        <TextView
+            android:id="@+id/likers"
+            android:layout_width="0dp"
+            style="@style/Widget.AppTheme.CheckButton"
+            android:layout_height="wrap_content"
+            android:text="@string/mentors"
+            android:textStyle="bold"
+            android:visibility="visible"
+            tools:text="125"
+            app:layout_constraintBottom_toTopOf="@id/like"
+            app:layout_constraintStart_toEndOf="@id/like"
+            app:layout_constraintTop_toBottomOf="@id/like" />
+
+        <ImageView
+            android:id="@+id/first"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppTheme.CheckButton"
+            android:visibility="gone"
+            app:icon="@drawable/ic_avatar"
+            app:layout_constraintBottom_toTopOf="@id/like"
+            app:layout_constraintStart_toEndOf="@id/like"
+            app:layout_constraintTop_toBottomOf="@id/like" />
+        <ImageView
+            android:id="@+id/second"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppTheme.CheckButton"
+            android:visibility="gone"
+            app:icon="@drawable/ic_avatar"
+            app:layout_constraintBottom_toTopOf="@id/first"
+            app:layout_constraintStart_toEndOf="@id/first"
+            app:layout_constraintTop_toBottomOf="@id/first" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/share"

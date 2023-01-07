@@ -1,14 +1,15 @@
-package ru.netology.nmedia.viewmodel
+package ru.netology.nework.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.dto.User
-import ru.netology.nmedia.model.FeedModelState
-import ru.netology.nmedia.repository.AuthRepository
+import ru.netology.nework.auth.AppAuth
+import ru.netology.nework.dto.User
+import ru.netology.nework.model.FeedModelState
+import ru.netology.nework.repository.AuthRepository
+
 import javax.inject.Inject
 
 class SignInViewModel   @Inject constructor(

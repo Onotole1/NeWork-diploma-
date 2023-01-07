@@ -1,4 +1,4 @@
-package ru.netology.nmedia.service
+package ru.netology.nework.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,6 +11,8 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
+import ru.netology.nework.api.ApiService
+import ru.netology.nework.auth.AppAuth
 
 import javax.inject.Inject
 import kotlin.random.Random

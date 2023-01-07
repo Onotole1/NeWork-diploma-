@@ -5,7 +5,7 @@
     <dimen name="height_image_ad">300dp</dimen>
 
     <dimen name="margin">16dp</dimen>
-    <dimen name="marginStart">20dp</dimen>
+    <dimen name="marginStart">24dp</dimen>
     <dimen name="marginEnd">8dp</dimen>
 
     <dimen name="commonSpacingSmall">4dp</dimen>

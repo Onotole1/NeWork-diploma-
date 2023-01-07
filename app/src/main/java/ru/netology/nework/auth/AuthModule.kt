@@ -1,4 +1,4 @@
-package ru.netology.nmedia.auth.di
+package ru.netology.nework.auth
 
 import android.content.Context
 import android.content.SharedPreferences

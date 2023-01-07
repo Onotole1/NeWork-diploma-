@@ -1,4 +1,4 @@
-package ru.netology.nmedia.error
+package ru.netology.nework.error
 
 import android.database.SQLException
 import java.io.IOException

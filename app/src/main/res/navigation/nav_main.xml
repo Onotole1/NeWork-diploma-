@@ -9,17 +9,29 @@
         android:id="@+id/editEventFragment"
         android:name="ru.netology.nework.ui.EditEventFragment"
         android:label="fragment_edit_event"
-        tools:layout="@layout/fragment_edit_event" />
+        tools:layout="@layout/fragment_edit_event" >
+        <action
+            android:id="@+id/action_editEventFragment_to_speakersFragment"
+            app:destination="@id/speakersFragment" />
+    </fragment>
     <fragment
         android:id="@+id/editJobFragment"
         android:name="ru.netology.nework.ui.EditJobFragment"
         android:label="fragment_edit_job"
-        tools:layout="@layout/fragment_edit_job" />
+        tools:layout="@layout/fragment_edit_job" >
+        <action
+            android:id="@+id/action_editJobFragment_to_speakersFragment"
+            app:destination="@id/speakersFragment" />
+    </fragment>
     <fragment
         android:id="@+id/editPostFragment"
         android:name="ru.netology.nework.ui.EditPostFragment"
         android:label="fragment_edit_post"
-        tools:layout="@layout/fragment_edit_post" />
+        tools:layout="@layout/fragment_edit_post" >
+        <action
+            android:id="@+id/action_editPostFragment_to_speakersFragment"
+            app:destination="@id/speakersFragment" />
+    </fragment>
     <fragment
         android:id="@+id/imageFragment"
         android:name="ru.netology.nework.ui.ImageFragment"
@@ -48,4 +60,9 @@
         android:name="ru.netology.nework.ui.IntentHandlerActivity"
         android:label="activity_intent_handler"
         tools:layout="@layout/activity_intent_handler" />
+    <fragment
+        android:id="@+id/speakersFragment"
+        android:name="ru.netology.nework.ui.SpeakersFragment"
+        android:label="fragment_check_users"
+        tools:layout="@layout/fragment_check_users" />
 </navigation>

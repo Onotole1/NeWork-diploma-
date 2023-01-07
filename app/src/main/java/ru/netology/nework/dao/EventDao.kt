@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ru.netology.nework.entity.EventEntity
+import ru.netology.nework.entity.PostEntity
 
 @Dao
 interface EventDao {
@@ -27,4 +28,22 @@ interface EventDao {
 
     @Query("UPDATE events SET participatedByMe=CASE WHEN participatedByMe THEN 0 ELSE 1 END WHERE id = :id AND participatedByMe=:participatedByMe")
     suspend fun participateById(id: Long,participatedByMe: Boolean)
+
+    @Query("SELECT * FROM events ORDER BY id DESC LIMIT 1")
+    suspend fun getEventPostMaxId(): EventEntity?
+
+    @Query("DELETE FROM events")
+    suspend fun removeAll()
+
+    @Query("UPDATE events SET content = :content WHERE id = :id")
+    suspend fun updateContentById(id: Long, content: String)
+
+    suspend fun save(event: EventEntity) =
+        if (event.id == 0L) insert(event) else updateContentById(event.id, event.content)
+
+    @Query("SELECT COUNT(*) == 0 FROM posts")
+    suspend fun isEmpty(): Boolean
+
+    @Query("SELECT COUNT(*) FROM events")
+    suspend fun count(): Int
 }

@@ -8,9 +8,7 @@
         <item
             android:id="@+id/object_edit"
             android:title="@string/obj_edit" />
-    </group>
 
-    <group android:id="@+id/other_object_menu">
         <item
             android:id="@+id/object_hide"
             android:title="@string/obj_hide" />

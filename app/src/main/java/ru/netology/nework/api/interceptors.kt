@@ -1,10 +1,11 @@
-package ru.netology.nmedia.api
+package ru.netology.nework.api
 
 import okhttp3.Interceptor
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
-import ru.netology.nmedia.BuildConfig
-import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nework.BuildConfig
+import ru.netology.nework.auth.AppAuth
+
 
 fun loggingInterceptor() = HttpLoggingInterceptor()
     .apply {
