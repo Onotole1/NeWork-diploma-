@@ -1,4 +1,4 @@
-package ru.netology.nework.repository
+package ru.netology.nework.repository.auth
 
 import ru.netology.nework.dto.User
 

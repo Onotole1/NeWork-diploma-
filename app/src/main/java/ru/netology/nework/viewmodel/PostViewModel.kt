@@ -13,7 +13,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import ru.netology.nework.auth.AppAuth
+import ru.netology.nework.dto.FeedItem
 import ru.netology.nework.dto.Post
+import ru.netology.nework.enumeration.AttachmentType
+import ru.netology.nework.hiltModules.CurrentTime
+import ru.netology.nework.model.PhotoModel
+import ru.netology.nework.repository.post.PostRepository
 
 import java.io.File
 import java.text.SimpleDateFormat

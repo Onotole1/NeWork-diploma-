@@ -11,6 +11,7 @@ import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.auth.AuthState
 import ru.netology.nework.dto.Token
+import ru.netology.nework.repository.auth.AuthRepository
 
 
 import java.io.IOException

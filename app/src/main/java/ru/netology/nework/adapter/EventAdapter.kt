@@ -11,14 +11,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import okio.utf8Size
-import ru.netology.nework.BuildConfig.BASE_URL
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.*
 import ru.netology.nework.dto.Event
-import ru.netology.nework.dto.FeedItem
 import ru.netology.nework.dto.Payload
 import ru.netology.nework.util.*
 import ru.netology.nework.viewmodel.UserViewModel
@@ -159,7 +155,7 @@ class EventViewHolder(
                     1,2,3 -> {
                         likers.isVisible = true
                         userViewModel.data.observe(lifecycleOwner) { users ->
-                            val mentors = users.filter { it.id in event.likeOwnerIds }
+                            val mentors = users.users.filter { it.id in event.likeOwnerIds }
                             likersAdapter.submitList(mentors)
                         }
                     }
@@ -204,10 +200,10 @@ class EventViewHolder(
                 listParticipants.adapter = participantsAdapter
 
                 userViewModel.data.observe(lifecycleOwner) { users ->
-                    val speakers = users.filter { it.id in event.speakerIds }
+                    val speakers = users.users.filter { it.id in event.speakerIds }
                     speakersAdapter.submitList(speakers)
 
-                    val participants = users.filter { it.id in event.participantsIds }
+                    val participants = users.users.filter { it.id in event.participantsIds }
                     participantsAdapter.submitList(participants)
                 }
 

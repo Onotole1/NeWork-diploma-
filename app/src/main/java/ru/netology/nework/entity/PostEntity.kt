@@ -27,8 +27,8 @@ data class PostEntity(
     val mentorsNames: List<String?>? = null,
     val jobs: List<String?>? = null
 
-    ) {
-    fun toDto() = Post(
+):FeedEnity{
+    override fun toDto()= Post(
         id,
         authorId,
         author,

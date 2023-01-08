@@ -46,9 +46,6 @@ fun uploadingMedia(view: ImageView, url: String?) {
         .into(view)
 }
 
-fun getAvatar(id:Long):String {
-   ApiService.getUsersById(id).avatar
-}
 
 fun showDateDialog(editText: EditText, context: Context) {
     val calendar = Calendar.getInstance()

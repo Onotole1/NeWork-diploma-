@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.User
 import ru.netology.nework.model.FeedModelState
-import ru.netology.nework.repository.AuthRepository
+import ru.netology.nework.repository.auth.AuthRepository
 
 import javax.inject.Inject
 
