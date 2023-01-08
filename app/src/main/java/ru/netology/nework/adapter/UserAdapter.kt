@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.CardUserBinding
-import ru.netology.nework.dto.FeedItem
 import ru.netology.nework.dto.User
 import ru.netology.nework.util.loadCircleCrop
 
@@ -18,7 +17,6 @@ interface UserOnInteractionListener {
 
 class UsersAdapter(
     private val listener: UserOnInteractionListener,
-    private val appAuth: AppAuth
     ) : ListAdapter<User, UserViewHolder>(UserDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {

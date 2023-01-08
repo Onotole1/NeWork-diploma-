@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import okio.utf8Size
 import ru.netology.nework.BuildConfig.BASE_URL
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
@@ -18,7 +20,8 @@ import ru.netology.nework.databinding.*
 import ru.netology.nework.dto.Event
 import ru.netology.nework.dto.FeedItem
 import ru.netology.nework.dto.Payload
-import ru.netology.nework.util.numbersToString
+import ru.netology.nework.util.*
+import ru.netology.nework.viewmodel.UserViewModel
 
 interface EventListener {
     fun onLikeListener(event: Event) {}
@@ -27,10 +30,7 @@ interface EventListener {
     fun onEditListener(event: Event) {}
     fun onFeedListener(event: Event) {}
     fun onHideListener(event: Event) {}
-    fun onPlaceWorkListener(event: Event) {}
-    fun onMentorsListener(event: Event) {}
     fun onFullscreenAttachment(attachmentUrl: String) {}
-    fun onLikeOwnerListener(event: Event) {}
     fun onMap(event: Event) {}
     fun onAuth()
 }
@@ -38,6 +38,8 @@ interface EventListener {
 class EventAdapter(
     private val listener: EventListener,
     private val appAuth: AppAuth,
+    private val userViewModel: UserViewModel,
+    private val lifecycleOwner: LifecycleOwner
 ) : PagingDataAdapter<Event, RecyclerView.ViewHolder>(EventDiffCallback()) {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -55,16 +57,17 @@ class EventAdapter(
                 parent,
                 false
             )
-        return EventViewHolder(binding, listener, appAuth)
+        return EventViewHolder(binding, listener, appAuth, userViewModel, lifecycleOwner)
 
     }
 }
 
-
-    class EventViewHolder(
+class EventViewHolder(
         private val binding: CardEventBinding,
         private val listener: EventListener,
         private val appAuth: AppAuth,
+        private val userViewModel: UserViewModel,
+        private val lifecycleOwner: LifecycleOwner
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(payload: Payload) {
             payload.liked?.also { liked ->
@@ -92,11 +95,20 @@ class EventAdapter(
 
         fun bind(event: Event) {
             binding.apply {
-
-                author.text = event.author
-                published.text = event.published.toString()
                 content.text = event.content
+                published.text = event.published
                 attachment.visibility = View.GONE
+                type.text = event.type.toString()
+
+                if (event.link!=null) {
+                    link.isVisible = true
+                    link.text = event.link
+                }else { link.isVisible = false}
+
+                if (event.coordinates != null) {
+                    navigate.isVisible = true
+                    navigate.setOnClickListener { listener.onMap(event)}
+                }
 
                 menu.visibility = if (event.ownedByMe) View.VISIBLE else View.INVISIBLE
                 menu.setOnClickListener {
@@ -123,40 +135,39 @@ class EventAdapter(
                         }
                     }.show()
                 }
-
-                val url = "${BASE_URL}/avatars/${event.authorAvatar}"
-                if (event.authorAvatar != null) {
-                    Glide.with(itemView)
-                        .load(url)
-                        .placeholder(R.drawable.ic_loading_24)
-                        .error(R.drawable.ic_baseline_error_outline_24)
-                        .timeout(10_000)
-                        .circleCrop()
-                        .into(avatar)
-                    avatar.setOnClickListener {
-                        listener.onFullscreenAttachment(url)
-                    }
-                }
-
-
-                val urlAttachment = "${BASE_URL}/media/${event.attachment?.url}"
                 if (event.attachment != null) {
-                    Glide.with(attachment.context)
-                        .load(urlAttachment)
-                        .placeholder(R.drawable.ic_loading_24)
-                        .error(R.drawable.ic_baseline_error_outline_24)
-                        .timeout(10_000)
-                        .into(attachment)
+                    uploadingMedia(attachment, event.attachment.url)
                     attachment.isVisible = true
                     attachment.setOnClickListener {
-                        listener.onFullscreenAttachment(urlAttachment)
+                        listener.onFullscreenAttachment(event.attachment.url)
                     }
                 } else {
                     attachment.isVisible = false
                 }
 
                 like.isChecked = event.likedByMe
-                likeCnt.text = numbersToString(event.likeOwnerIds.size)
+                val likersList = event.likeOwnerIds ?: emptyList()
+
+                val likersAdapter = UsersAdapter(object : UserOnInteractionListener {
+                    override fun onRemove(id: Long) = Unit
+                })
+                likers.adapter = likersAdapter
+
+
+                when (likersList.size) {
+                    0 -> likers.isVisible = false
+                    1,2,3 -> {
+                        likers.isVisible = true
+                        userViewModel.data.observe(lifecycleOwner) { users ->
+                            val mentors = users.filter { it.id in event.likeOwnerIds }
+                            likersAdapter.submitList(mentors)
+                        }
+                    }
+                    else -> {
+                        likers.isVisible = false
+                        like.text = numbersToString(likersList.size)
+                    }
+                }
 
 
                 like.setOnClickListener {
@@ -171,20 +182,36 @@ class EventAdapter(
                 }
                 thisEvent.setOnClickListener { listener.onFeedListener(event) }
 
-                placeWork.setOnClickListener {
-                    listener.onPlaceWorkListener(event)
+                val speakerslist = event.speakerIds ?: emptyList()
+                listSpeakers.isVisible = speakerslist.isNotEmpty()
+                speakersHeader.isVisible = speakerslist.isNotEmpty()
+
+                val participantlist = event.participantsIds ?: emptyList()
+                listParticipants.isVisible = participantlist.isNotEmpty()
+                participantsHeader.isVisible = participantlist.isNotEmpty()
+
+                val avatarUrl = event.authorAvatar ?: ""
+                author.avatar.loadCircleCrop(avatarUrl, R.drawable.ic_avatar)
+
+                val speakersAdapter = UsersAdapter(object : UserOnInteractionListener {
+                    override fun onRemove(id: Long) = Unit
+                })
+                listSpeakers.adapter = speakersAdapter
+
+                val participantsAdapter = UsersAdapter(object : UserOnInteractionListener {
+                    override fun onRemove(id: Long) = Unit
+                })
+                listParticipants.adapter = participantsAdapter
+
+                userViewModel.data.observe(lifecycleOwner) { users ->
+                    val speakers = users.filter { it.id in event.speakerIds }
+                    speakersAdapter.submitList(speakers)
+
+                    val participants = users.filter { it.id in event.participantsIds }
+                    participantsAdapter.submitList(participants)
                 }
 
-                mentors.setOnClickListener {
-                    listener.onMentorsListener(event)
-                }
 
-                attachment.setOnClickListener {
-                    event.attachment?.let { attach ->
-                        listener.onFullscreenAttachment(attach.url)
-                    }
-
-                }
             }
         }
     }

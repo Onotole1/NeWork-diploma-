@@ -54,6 +54,7 @@
     <string name="sign_in_name">Sign in</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
+    <string name="periodWork">Until now</string>
     <string name="sign_name">Name</string>
     <string name="password">Password</string>
     <string name="sign_in_button">Enter</string>
@@ -89,4 +90,6 @@
     <string name="error_notification_text" />
     <string name="notification_user_liked" />
     <string name="notification_user_new_posted" />
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

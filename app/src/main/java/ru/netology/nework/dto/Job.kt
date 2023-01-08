@@ -1,5 +1,7 @@
 package ru.netology.nework.dto
 
+import ru.netology.nework.R
+
 data class Job (
     val id: Long,
     val name: String,
@@ -17,5 +19,13 @@ data class Job (
             start = 0L,
             finish = null
         )
+    }
+    fun getString():String{
+        var period =""
+        if (finish!=null){
+        period = start.toString()+" - " + finish.toString()
+        } else {period = start.toString()+" " + R.string.periodWork }
+
+        return (period)
     }
 }

@@ -59,6 +59,7 @@
             android:layout_marginStart="@dimen/marginStart"
             android:ellipsize="end"
             android:singleLine="true"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@id/published"
             app:layout_constraintEnd_toStartOf="@id/menu"
             app:layout_constraintStart_toEndOf="@id/avatar"
@@ -74,6 +75,7 @@
             android:layout_marginEnd="@dimen/marginEnd"
             android:contentDescription="@string/menu"
             app:icon="@drawable/ic_menu_24"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/avatar"
             tools:ignore="DuplicateClickableBoundsCheck">
@@ -107,7 +109,7 @@
             app:layout_constraintBottom_toTopOf="@id/coordinates"
             app:layout_constraintStart_toStartOf="@id/content"
             app:layout_constraintTop_toBottomOf="@id/content" />
-        <TextView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mentorsEdit"
             android:layout_width="@dimen/commonSpacingColum"
             android:layout_height="@dimen/commonSpacingSLarge"
@@ -120,18 +122,36 @@
             app:layout_constraintBottom_toBottomOf="@id/mentors"
             app:layout_constraintStart_toEndOf="@+id/mentors"
             app:layout_constraintTop_toTopOf="@+id/mentors"
-            tools:text="Вася,Петя, Маша, Оля, Кеша, Эллинааа" />
+            tools:listitem="@layout/card_user" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/moreMentors"
-            style="@style/Widget.AppTheme.CheckButton"
-            android:layout_width="@dimen/commonSpacingLarge"
-            android:layout_height="@dimen/commonSpacingLarge"
-            app:icon="@drawable/ic_more"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/mentorsEdit"
-            app:layout_constraintStart_toEndOf="@+id/mentorsEdit"
-            app:layout_constraintTop_toTopOf="@+id/mentorsEdit" />
+
+        <TextView
+            android:id="@+id/linkHeader"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="@dimen/marginStart"
+            android:layout_marginBottom="@dimen/marginStart"
+            android:text="@string/link"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mentors" />
+
+        <TextView
+            android:id="@+id/link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/commonSpacingSmall"
+            android:autoLink="web"
+            android:ellipsize="end"
+            android:visibility="visible"
+            android:focusable="true"
+            android:lineSpacingExtra="@dimen/commonSpacingSmall"
+            android:linksClickable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/linkHeader"
+            app:layout_constraintTop_toBottomOf="@id/mentorsEdit"
+            tools:text="https://netology.ru/free" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/coordinates"

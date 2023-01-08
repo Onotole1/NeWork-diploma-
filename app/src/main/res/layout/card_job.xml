@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/Period"
+        android:id="@+id/period"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -22,7 +22,7 @@
         android:paddingEnd="10dp">
 
         <TextView
-            android:id="@+id/name_of_company"
+            android:id="@+id/nameOfCompany"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
@@ -44,17 +44,21 @@
             android:layout_height="wrap_content"
             android:textColorLink="@color/blue"
             tools:text="https://netology.ru/"
+            android:visibility="visible"
             android:singleLine="true"/>
 
 
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/menu"
         style="@style/Widget.AppTheme.Viewing"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginEnd="@dimen/marginEnd"
+        android:contentDescription="@string/menu"
         app:icon="@drawable/ic_menu_24"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/Period" />
 

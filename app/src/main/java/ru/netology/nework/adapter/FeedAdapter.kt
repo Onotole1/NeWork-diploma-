@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.view.*
+import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import ru.netology.nework.databinding.CardTextItemSeparatorBinding
 import ru.netology.nework.dto.*
 import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.util.*
+import ru.netology.nework.viewmodel.UserViewModel
 
 
 interface OnInteractionListener {
@@ -39,6 +41,8 @@ interface OnInteractionListener {
 class FeedAdapter(
     private val listener: OnInteractionListener,
     private val appAuth: AppAuth,
+    private val userViewModel: UserViewModel,
+    private val lifecycleOwner: LifecycleOwner
 ) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(PostDiffCallback()) {
 
     override fun getItemViewType(position: Int): Int =
@@ -54,7 +58,7 @@ class FeedAdapter(
             R.layout.card_post -> {
                 val binding =
                     CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                PostViewHolder(binding, listener, appAuth)
+                PostViewHolder(binding, listener, appAuth, userViewModel, lifecycleOwner)
             }
             R.layout.card_ad -> {
                 val binding =
@@ -131,6 +135,8 @@ class PostViewHolder(
     private val binding: CardPostBinding,
     private val listener: OnInteractionListener,
     private val appAuth: AppAuth,
+    private val userViewModel: UserViewModel,
+    private val lifecycleOwner: LifecycleOwner
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(payload: Payload) {
         payload.liked?.also { liked ->
@@ -215,13 +221,17 @@ class PostViewHolder(
             mentorsEdit.isVisible = mentorslist.isNotEmpty()
             if (mentorslist.isNotEmpty()) {
                 val nameMentorsString = listToString(mentorslist)
-                mentorsEdit.text = nameMentorsString
-                moreMentors.isVisible = nameMentorsString.utf8Size() > 36
-                moreMentors.setOnClickListener {
                 listener.onMentorsListener(post)
             }
-            }
+            val mentorsAdapter = UsersAdapter(object : UserOnInteractionListener {
+            override fun onRemove(id: Long) = Unit
+            })
+             mentorsEdit.adapter = mentorsAdapter
 
+             userViewModel.data.observe(lifecycleOwner) { users ->
+            val mentors = users.filter { it.id in post.mentorsNames }
+            mentorsAdapter.submitList(mentors)
+        }
 
 
             val likersList = post.likeOwnerIds ?: emptyList()
@@ -285,6 +295,10 @@ class PostViewHolder(
 
             }
 
+            if (post.link!=null) {
+                link.isVisible = true
+                link.text = post.link
+            }else { link.isVisible = false}
             }
         }
     }
