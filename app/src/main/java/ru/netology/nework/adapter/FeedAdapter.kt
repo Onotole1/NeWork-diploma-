@@ -11,7 +11,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import okio.utf8Size
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.CardAdBinding
@@ -220,19 +219,17 @@ class PostViewHolder(
             mentors.isVisible = mentorslist.isNotEmpty()
             mentorsEdit.isVisible = mentorslist.isNotEmpty()
             if (mentorslist.isNotEmpty()) {
-                val nameMentorsString = listToString(mentorslist)
                 listener.onMentorsListener(post)
+                val mentorsAdapter = UsersAdapter(object : UserOnInteractionListener {
+                    override fun onRemove(id: Long) = Unit
+                })
+                mentorsEdit.adapter = mentorsAdapter
+                userViewModel.data.observe(lifecycleOwner) { users ->
+                    val mentors = users.users.filter { it.id in post.mentionIds }
+                    mentorsAdapter.submitList(mentors)
+                }
+
             }
-            val mentorsAdapter = UsersAdapter(object : UserOnInteractionListener {
-            override fun onRemove(id: Long) = Unit
-            })
-             mentorsEdit.adapter = mentorsAdapter
-
-             userViewModel.data.observe(lifecycleOwner) { users ->
-            val mentors = users.filter { it.id in post.mentorsNames }
-            mentorsAdapter.submitList(mentors)
-        }
-
 
             val likersList = post.likeOwnerIds ?: emptyList()
 
@@ -244,18 +241,18 @@ class PostViewHolder(
                     likers.isVisible = false
                     first.isVisible = true
                     val firsts = likersList.first()
-                    val firstsAvatar = getAvatar(firsts)
+                    val firstsAvatar = userViewModel.getUserAvatar(firsts)
                     uploadingAvatar(first,firstsAvatar)
                 }
                 2 -> {
                     likers.isVisible = false
                     first.isVisible = true
                     val firsts = likersList.first()
-                    val firstsAvatar = getAvatar(firsts)
+                    val firstsAvatar = userViewModel.getUserAvatar(firsts)
                     uploadingAvatar(first,firstsAvatar)
                     second.isVisible = true
                     val seconds = likersList.first()
-                    val secondsAvatar = getAvatar(seconds)
+                    val secondsAvatar = userViewModel.getUserAvatar(seconds)
                     uploadingAvatar(second,secondsAvatar)
                 }
                 else -> {   likers.isVisible = true

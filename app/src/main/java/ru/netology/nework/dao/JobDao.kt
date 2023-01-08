@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.netology.nework.entity.JobEntity
 
 @Dao
-interface  JobDao {
+interface  JobDao:FeedDao {
     @Query("SELECT * FROM jobs ORDER BY start DESC")
     fun getAll(): Flow<List<JobEntity>>
 
@@ -22,8 +22,14 @@ interface  JobDao {
     suspend fun insert(jobs: List<JobEntity>)
 
     @Query("DELETE FROM jobs WHERE id = :id")
-    suspend fun removeById(id: Long)
+    override suspend fun removeById(id: Long)
 
     @Query("DELETE FROM jobs")
-    suspend fun removeAll()
+    override suspend fun removeAll()
+
+    @Query("SELECT COUNT(*) == 0 FROM jobs")
+    override suspend fun isEmpty(): Boolean
+
+    @Query("SELECT COUNT(*) FROM jobs")
+    override suspend fun count(): Int
 }

@@ -3,7 +3,7 @@ package ru.netology.nework.dto
 import ru.netology.nework.dto.User.Companion.nuller
 import ru.netology.nework.enumeration.EventType
 
-data class Event (
+data class Event(
     override val id: Long,
     val authorId: Long,
     val author: String,

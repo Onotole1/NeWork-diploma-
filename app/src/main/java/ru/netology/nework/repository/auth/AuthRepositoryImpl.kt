@@ -1,4 +1,4 @@
-package ru.netology.nework.repository
+package ru.netology.nework.repository.auth
 
 import ru.netology.nmedia.api.ApiService
 import ru.netology.nmedia.dao.PostDao
@@ -6,7 +6,6 @@ import ru.netology.nmedia.dto.User
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
-import ru.netology.nmedia.error.UnknownError
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,7 +14,7 @@ import javax.inject.Singleton
 class AuthRepositoryimpl@Inject constructor(
     private val postDao: PostDao,
     private val apiService: ApiService,
-):AuthRepository {
+): AuthRepository {
 
     override suspend fun authUser(login: String, password: String): User {
         try {

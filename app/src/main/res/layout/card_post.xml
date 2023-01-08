@@ -109,6 +109,7 @@
             app:layout_constraintBottom_toTopOf="@id/coordinates"
             app:layout_constraintStart_toStartOf="@id/content"
             app:layout_constraintTop_toBottomOf="@id/content" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mentorsEdit"
             android:layout_width="@dimen/commonSpacingColum"

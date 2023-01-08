@@ -5,14 +5,13 @@ import androidx.room.PrimaryKey
 import ru.netology.nework.dto.Attachment
 import ru.netology.nework.dto.Coordinates
 import ru.netology.nework.dto.Event
-import ru.netology.nework.dto.User
 import ru.netology.nework.enumeration.EventType
 
 
 @Entity(tableName = "events")
-class EventEntity (
+class EventEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+     val id: Long,
     val authorId: Long,
     val author: String,
     val authorAvatar: String? = null,
@@ -29,8 +28,8 @@ class EventEntity (
     val participantsIds: Set<Long> = emptySet(),
     val participatedByMe: Boolean=false,
     val ownedByMe: Boolean=false,
-    ) {
-        fun toDto() = Event(
+    ):FeedEnity{
+    override fun toDto() = Event(
             id,
             authorId,
             author,
@@ -73,7 +72,8 @@ class EventEntity (
                 )
 
         }
-    }
+
+}
 
     fun List<EventEntity>.toDto(): List<Event> = map(EventEntity::toDto)
     fun List<Event>.toEntity(): List<EventEntity> = map(EventEntity.Companion::fromDto)
