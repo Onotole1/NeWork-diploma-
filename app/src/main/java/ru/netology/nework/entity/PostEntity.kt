@@ -6,6 +6,7 @@ import ru.netology.nework.dto.Attachment
 import ru.netology.nework.dto.Coordinates
 import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.User
+import ru.netology.nework.enumeration.AttachmentType
 
 @Entity(tableName = "posts")
 data class PostEntity(
@@ -27,8 +28,8 @@ data class PostEntity(
     val mentorsNames: List<String?>? = null,
     val jobs: List<String?>? = null
 
-):FeedEnity{
-    override fun toDto()= Post(
+){
+    fun toDto()= Post(
         id,
         authorId,
         author,
@@ -74,3 +75,4 @@ data class PostEntity(
 
 fun List<PostEntity>.toDto(): List<Post> = map(PostEntity::toDto)
 fun List<Post>.toEntity(): List<PostEntity> = map(PostEntity.Companion::fromDto)
+

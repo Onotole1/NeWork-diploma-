@@ -1,131 +1,131 @@
 package ru.netology.nework.ui
 
-import android.app.Activity
-import android.net.Uri
+
 import android.os.Bundle
+import android.text.Editable
 import android.view.*
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toFile
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.github.dhaval2404.imagepicker.ImagePicker
-import com.github.dhaval2404.imagepicker.constant.ImageProvider
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import ru.netology.nmedia.R
-import ru.netology.nmedia.databinding.FragmentEditPostBinding
-import ru.netology.nmedia.databinding.FragmentNewPostBinding
-import ru.netology.nmedia.util.AndroidUtils
-import ru.netology.nmedia.viewmodel.PostViewModel
+import ru.netology.nework.R
+import ru.netology.nework.databinding.FragmentEditJobBinding
+import ru.netology.nework.util.AndroidUtils
+import ru.netology.nework.util.CurrentTimes
+import ru.netology.nework.util.CurrentTimes.*
+import ru.netology.nework.viewmodel.AuthViewModel
+import ru.netology.nework.viewmodel.JobViewModel
+import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+
+const val START_KEY = "START_KEY"
+const val FINISH_KEY = "FINISH_KEY"
+
 @AndroidEntryPoint
 class EditJobFragment : Fragment() {
 
-    private val viewModel: PostViewModel by activityViewModels()
-    private var fragmentBinding: FragmentNewPostBinding? = null
+    private val viewModel: JobViewModel by activityViewModels()
+    private var fragmentBinding: FragmentEditJobBinding? = null
+    private var calendar: Calendar? = null
+
+    private val authViewModel: AuthViewModel by viewModels(
+        ownerProducer = ::requireParentFragment
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentEditPostBinding.inflate(
+        val binding = FragmentEditJobBinding.inflate(
             inflater,
             container,
             false
         )
 
-        arguments?.textArg
-            ?.let { binding.edit.setText(it) }
+        val userId: Long? = arguments?.getLong("user")
+        fragmentBinding = binding
+        calendar = Calendar.getInstance()
+        with(binding) {
+            startDateEdit.text = (savedInstanceState?.getString(START_KEY)?: getString(R.string.startDate)) as Editable?
+            finishDateEdit.text = (savedInstanceState?.getString(FINISH_KEY)?: getString(R.string.finishDate)) as Editable?
+        }
 
-        binding.edit.requestFocus()
-
-        binding.edit.setText(viewModel.edited.value?.content)
-
-        val pickPhotoLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                when (it.resultCode) {
-                    ImagePicker.RESULT_ERROR -> {
-                        Snackbar.make(
-                            binding.root,
-                            ImagePicker.getError(it.data),
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
-                    Activity.RESULT_OK -> {
-                        val uri: Uri? = it.data?.data
-                        viewModel.changePhoto(uri, uri?.toFile())
-                    }
-                }
+        binding.startDateEdit.setOnClickListener {
+            setDate(calendar) {
+                initStart()
             }
-
-        binding.pickPhoto.setOnClickListener {
-            ImagePicker.with(this)
-                .crop()
-                .compress(2048)
-                .provider(ImageProvider.GALLERY)
-                .galleryMimeTypes(
-                    arrayOf(
-                        "image/png",
-                        "image/jpeg",
-                    )
-                )
-                .createIntent(pickPhotoLauncher::launch)
         }
 
-        binding.takePhoto.setOnClickListener {
-            ImagePicker.with(this)
-                .crop()
-                .compress(2048)
-                .provider(ImageProvider.CAMERA)
-                .createIntent(pickPhotoLauncher::launch)
+        binding.finishDateEdit.setOnClickListener {
+            setDate(calendar) {
+                initFinish()
+            }
         }
 
-        binding.deletePhoto.setOnClickListener {
-            viewModel.changePhoto(null, null)
-        }
 
-        viewModel.postCreated.observe(viewLifecycleOwner) {
+
+        val company: String? = arguments?.getString("company")
+        val position: String? = arguments?.getString("position")
+        val start: Long? = CurrentTimes.formatDate(arguments?.getLong("start") as Long)
+        val finish: Long? = CurrentTimes.formatDate(arguments?.getLong("finish"))
+        val link: String? = arguments?.getString("link")
+
+
+        viewModel.jobCreated.observe(viewLifecycleOwner) {
             findNavController().navigateUp()
         }
 
-        viewModel.photo.observe(viewLifecycleOwner) {
-            if (it.uri == null) {
-                binding.photoLayout.visibility = View.GONE
-                return@observe
-            }
 
-            binding.photoLayout.visibility = View.VISIBLE
-            binding.photo.setImageURI(it.uri)
+        with(binding) {
+            startDateEdit.setText(start)
+            finishDateEdit.setText(finish)
+            companyEdit.setText(company)
+            linkEdit.setText(link)
+            positionEdit.setText(position)
+        }
+
+        binding.startDateEdit.setOnClickListener {
+            binding.startDateEdit.error = null
+            context?.let { context -> showDateDialog(binding.startDateEdit, context) }
+        }
+
+        binding.finishDateEdit.setOnClickListener {
+            context?.let { context -> showDateDialog(binding.finishDateEdit, context) }
+        }
+
+        binding.linkEdit.afterTextChanged {
+            viewModel.isLinkValid(it)
         }
 
         requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_new_post, menu)
-            }
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
-                when (menuItem.itemId) {
-                    R.id.save -> {
-                        fragmentBinding?.let {
-                            viewModel.changeContent(it.editNew.text.toString())
-                            viewModel.save()
-                            AndroidUtils.hideKeyboard(requireView())
-                        }
-                        true
-                    }
-                    else -> false
+             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                 menuInflater.inflate(R.menu.new_object, menu)
                 }
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+                    when (menuItem.itemId) {
+                        R.id.save -> {
+                            fragmentBinding?.let {
+                                viewModel.changeContent(it.editNew.text.toString())
+                                viewModel.save()
+                                AndroidUtils.hideKeyboard(requireView())
+                            }
+                            true
+                        }
+                        else -> false
+                    }
 
-        }, viewLifecycleOwner)
+            }, viewLifecycleOwner)
+
 
         return binding.root
     }
-    override fun onDestroyView() {
-        fragmentBinding = null
-        super.onDestroyView()
+    override fun onDetach() {
+        super.onDetach()
+        calendar = null
     }
 
     companion object {

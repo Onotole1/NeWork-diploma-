@@ -2,6 +2,7 @@ package ru.netology.nework.repository
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import retrofit2.Response
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.dto.Attachment
 import ru.netology.nework.dto.MediaUpload
@@ -31,3 +32,4 @@ suspend fun uploadWithContent(upload: MediaUpload,apiService: ApiService,): Atta
         throw UnknownError
     }
 }
+

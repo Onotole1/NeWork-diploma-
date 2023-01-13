@@ -10,7 +10,7 @@ import ru.netology.nework.entity.EventEntity
 import ru.netology.nework.entity.PostEntity
 
 @Dao
-interface EventDao:FeedDao {
+interface EventDao {
     @Query("SELECT * FROM events ORDER BY id DESC")
     fun getAll(): Flow<List<EventEntity>>
 
@@ -24,30 +24,33 @@ interface EventDao:FeedDao {
     fun insert(event: List<EventEntity>)
 
     @Query("DELETE FROM events WHERE id = :id")
-    override suspend fun removeById(id: Long)
+    suspend fun removeById(id: Long)
 
     @Query("UPDATE events SET likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END WHERE id = :id AND likedByMe=:likedByMe")
-    override suspend fun likeById(id: Long, likedByMe: Boolean)
+    suspend fun likeById(id: Long, likedByMe: Boolean)
 
     @Query("UPDATE events SET participatedByMe=CASE WHEN participatedByMe THEN 0 ELSE 1 END WHERE id = :id AND participatedByMe=:participatedByMe")
     suspend fun participateById(id: Long,participatedByMe: Boolean)
 
     @Query("SELECT * FROM events ORDER BY id DESC LIMIT 1")
-    suspend fun getEventPostMaxId(): EventEntity?
+    suspend fun getEventEventMaxId(): EventEntity?
+
+    @Query("SELECT * FROM events  WHERE id = :id")
+    suspend fun getEventEventId(id: Long): EventEntity?
 
     @Query("DELETE FROM events")
-    override suspend fun removeAll()
+    suspend fun removeAll()
 
     @Query("UPDATE events SET content = :content WHERE id = :id")
-    override suspend fun updateContentById(id: Long, content: String)
+    suspend fun updateContentById(id: Long, content: String)
 
     suspend fun save(event: EventEntity) =
         if (event.id == 0L) insert(event) else updateContentById(event.id, event.content)
 
     @Query("SELECT COUNT(*) == 0 FROM events")
-    override suspend fun isEmpty(): Boolean
+    suspend fun isEmpty(): Boolean
 
     @Query("SELECT COUNT(*) FROM events")
-    override suspend fun count(): Int
+    suspend fun count(): Int
 
 }

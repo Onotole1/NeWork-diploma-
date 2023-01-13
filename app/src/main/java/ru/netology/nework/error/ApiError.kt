@@ -1,9 +1,10 @@
 package ru.netology.nework.error
 
 import android.database.SQLException
+import okhttp3.ResponseBody
 import java.io.IOException
 
-sealed class AppError(var code: String) : RuntimeException() {
+sealed class AppError(var status:Int =-1,var code: String) : RuntimeException() {
     companion object {
         fun from(e: Throwable): AppError = when (e) {
             is AppError -> e
@@ -14,9 +15,10 @@ sealed class AppError(var code: String) : RuntimeException() {
     }
 }
 
-class ApiError(val status: Int, code: String) : AppError(code)
-object NetworkError : AppError("error_network")
-object DbError : AppError("error_db")
-object UnknownError : AppError("error_unknown")
+class ApiError(status: Int, code: String) : AppError(code=code)
+class ApiError2(status:Int, code: String, val responseBody: ResponseBody?) : AppError(status,code)
+object NetworkError : AppError(code="error_network")
+object DbError : AppError(code="error_db")
+object UnknownError : AppError(code="error_unknown")
 
 

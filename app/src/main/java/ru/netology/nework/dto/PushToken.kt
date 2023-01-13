@@ -3,3 +3,7 @@ package ru.netology.nework.dto
 data class  PushToken(
     val token: String,
 )
+
+val nullToken = PushToken(
+    token = "",
+)

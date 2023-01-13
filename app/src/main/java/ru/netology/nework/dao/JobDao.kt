@@ -5,10 +5,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import ru.netology.nework.entity.EventEntity
 import ru.netology.nework.entity.JobEntity
+import ru.netology.nework.entity.PostEntity
 
 @Dao
-interface  JobDao:FeedDao {
+interface  JobDao {
     @Query("SELECT * FROM jobs ORDER BY start DESC")
     fun getAll(): Flow<List<JobEntity>>
 
@@ -22,14 +24,15 @@ interface  JobDao:FeedDao {
     suspend fun insert(jobs: List<JobEntity>)
 
     @Query("DELETE FROM jobs WHERE id = :id")
-    override suspend fun removeById(id: Long)
+    suspend fun removeById(id: Long)
 
+    suspend fun getPostById(id: Long): PostEntity?
     @Query("DELETE FROM jobs")
-    override suspend fun removeAll()
+    suspend fun removeAll()
 
     @Query("SELECT COUNT(*) == 0 FROM jobs")
-    override suspend fun isEmpty(): Boolean
+    suspend fun isEmpty(): Boolean
 
     @Query("SELECT COUNT(*) FROM jobs")
-    override suspend fun count(): Int
+    suspend fun count(): Int
 }

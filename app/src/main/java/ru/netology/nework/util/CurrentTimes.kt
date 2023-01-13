@@ -1,4 +1,4 @@
-package ru.netology.nework.hiltModules
+package ru.netology.nework.util
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
@@ -6,9 +6,6 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.text.format.DateFormat
 import android.widget.EditText
-import android.widget.ImageView
-import com.bumptech.glide.Glide
-import ru.netology.nework.R
 import ru.netology.nework.enumeration.SeparatorTimeType
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -25,7 +22,7 @@ const val SEC_PER_MINUTE = 60
 const val MS_PER_SEC = 1000
 
 @Singleton
-class CurrentTime @Inject constructor() {
+class CurrentTimes @Inject constructor() {
 
     val currentTime: Long
         get() = Calendar.getInstance().time.time
@@ -45,10 +42,7 @@ class CurrentTime @Inject constructor() {
             else -> SeparatorTimeType.NULL
         }
     }
-    fun formatDate(value: Long?): String? {
-        return if (value == null) null else DateFormat.format("yyyy-MM-dd", Date(value * 1000))
-            .toString()
-    }
+
     @SuppressLint("NewApi")
     fun formatDate(value: String): String {
         val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
@@ -57,19 +51,10 @@ class CurrentTime @Inject constructor() {
 
         return formatter.format(Instant.parse(value))
     }
-    fun uploadingAvatar(view: ImageView, avatar: String?) {
-        Glide.with(view)
-            .load(avatar)
-            .circleCrop()
-            .placeholder(R.drawable.ic_avatar)
-            .timeout(10_000)
-            .into(view)
-    }
-    fun uploadingMedia(view: ImageView, url: String?) {
-        Glide.with(view)
-            .load(url)
-            .timeout(10_000)
-            .into(view)
+
+    fun formatDate(value: Long?): String? {
+        return if (value == null) null else DateFormat.format("yyyy-MM-dd", Date(value * 1000))
+            .toString()
     }
 
     fun showDateDialog(editText: EditText, context: Context) {

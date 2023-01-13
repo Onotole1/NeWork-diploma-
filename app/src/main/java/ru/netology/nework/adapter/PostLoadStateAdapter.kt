@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.databinding.LoadStateBinding
 
 
-class PostLoadStateAdapter(
+class LoadStateAdapter(
     private val retryListener: () -> Unit,
 ) : LoadStateAdapter<LoadStateViewHolder>() {
 

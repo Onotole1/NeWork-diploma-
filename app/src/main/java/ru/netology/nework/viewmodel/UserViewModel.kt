@@ -1,20 +1,24 @@
 package ru.netology.nework.viewmodel
 
 import androidx.lifecycle.*
-import androidx.paging.PagingData
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import ru.netology.nework.api.*
+import ru.netology.nework.dto.AuthState
 import ru.netology.nework.dto.User
+import ru.netology.nework.error.ApiError
+import ru.netology.nework.error.NetworkError
+import ru.netology.nework.error.UnknownError
 import ru.netology.nework.model.UserModel
 import ru.netology.nework.model.UsersModelState
-
 import ru.netology.nework.repository.UserRepository
+import ru.netology.nework.repository.checkResponse
+import java.io.IOException
 import javax.inject.Inject
 
 class UserViewModel@Inject constructor(
-    private val repository: UserRepository
+    private val repository: UserRepository,
 ) : ViewModel() {
 
     val data: LiveData<UserModel> = repository.data
@@ -50,6 +54,7 @@ class UserViewModel@Inject constructor(
 
         }
     }
+
     fun getUserById(id: Long) = viewModelScope.launch {
         try {
             _dataState.value = UsersModelState(loading = true)
@@ -66,10 +71,12 @@ class UserViewModel@Inject constructor(
         }
         return null
     }
+
     fun getUserAvatar(id: Long): String? {
         data.value?.users?.map { user ->
             if (id == user.id) return user.avatar
         }
         return null
     }
+
 }

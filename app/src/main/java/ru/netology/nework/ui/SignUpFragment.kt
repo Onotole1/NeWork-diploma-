@@ -9,9 +9,10 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import ru.netology.nmedia.R
-import ru.netology.nmedia.databinding.FragmentSignUpBinding
-import ru.netology.nmedia.viewmodel.SignUpViewModel
+import ru.netology.nework.R
+import ru.netology.nework.databinding.FragmentSignUpBinding
+import ru.netology.nework.viewmodel.SignUpViewModel
+
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
@@ -27,7 +28,7 @@ class SignUpFragment : Fragment() {
         val binding = FragmentSignUpBinding.inflate(inflater, container, false)
 
         viewModel.data.observe(viewLifecycleOwner) {
-            viewModel.auth.setAuth(it.id, it.token)
+            viewModel.auth.setAuth(it.id, it.token!!.token, it.login!!)
             findNavController().navigateUp()
         }
 

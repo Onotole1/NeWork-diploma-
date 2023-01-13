@@ -13,3 +13,10 @@ data class UsersModelState(
     val error: Boolean = false,
     val refreshing: Boolean = false,
 )
+
+data class LoginFormState(
+    val passwordError: Int? = null,
+    val isDataValid: Boolean = false,
+    val errorAuth: Boolean = false,
+    val errorRegistration: Boolean = false
+)

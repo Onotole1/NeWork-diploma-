@@ -18,7 +18,6 @@ class SignInFragment : Fragment() {
 
     private val viewModel: SignInViewModel by activityViewModels()
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,7 +27,7 @@ class SignInFragment : Fragment() {
         val binding = FragmentSignInBinding.inflate(inflater, container, false)
 
         viewModel.data.observe(viewLifecycleOwner) {
-            viewModel.auth.setAuth(it.id, it.token)
+            viewModel.auth.setAuth(it.id, it.token!!.token, it.login!!)
             findNavController().navigateUp()
         }
 

@@ -65,4 +65,12 @@
         android:name="ru.netology.nework.ui.SpeakersFragment"
         android:label="fragment_check_users"
         tools:layout="@layout/fragment_check_users" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="ru.netology.nework.ui.MapFragment"
+        android:label="MapFragment" />
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="ru.netology.nework.ui.UserFragment"
+        android:label="UserFragment" />
 </navigation>

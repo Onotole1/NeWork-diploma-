@@ -28,8 +28,8 @@ class EventEntity(
     val participantsIds: Set<Long> = emptySet(),
     val participatedByMe: Boolean=false,
     val ownedByMe: Boolean=false,
-    ):FeedEnity{
-    override fun toDto() = Event(
+    ){
+    fun toDto() = Event(
             id,
             authorId,
             author,

@@ -14,18 +14,17 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import ru.netology.nmedia.R
-import ru.netology.nmedia.databinding.FragmentEditPostBinding
-import ru.netology.nmedia.databinding.FragmentNewPostBinding
-import ru.netology.nmedia.util.AndroidUtils
-import ru.netology.nmedia.viewmodel.PostViewModel
+import ru.netology.nework.R
+import ru.netology.nework.databinding.FragmentEditPostBinding
+import ru.netology.nework.util.AndroidUtils
+import ru.netology.nework.viewmodel.PostViewModel
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 @AndroidEntryPoint
 class EditPostFragment : Fragment() {
 
     private val viewModel: PostViewModel by activityViewModels()
-    private var fragmentBinding: FragmentNewPostBinding? = null
+    private var fragmentBinding: FragmentEditPostBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,14 +72,6 @@ class EditPostFragment : Fragment() {
                         "image/jpeg",
                     )
                 )
-                .createIntent(pickPhotoLauncher::launch)
-        }
-
-        binding.takePhoto.setOnClickListener {
-            ImagePicker.with(this)
-                .crop()
-                .compress(2048)
-                .provider(ImageProvider.CAMERA)
                 .createIntent(pickPhotoLauncher::launch)
         }
 

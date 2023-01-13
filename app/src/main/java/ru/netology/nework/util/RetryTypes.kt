@@ -1,4 +1,13 @@
 package ru.netology.nework.util
 
-class RetryTypes {
+enum class RetryTypes  {
+    LOAD,
+    LIKE,
+    UNLIKE,
+    SAVE,
+    REMOVE,
+    NULL,
+    PARTICIPATE,
+    UNPARTICIPATE,
+    RETRY
 }

@@ -1,28 +1,29 @@
-package ru.netology.nework.repository.post
+package ru.netology.nework.repository
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import ru.netology.nework.api.PostApiService
+import ru.netology.nework.api.WallApiService
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.db.AppDb
 import ru.netology.nework.entity.KeyType
 import ru.netology.nework.entity.PostEntity
 import ru.netology.nework.entity.PostRemoteKeyEntity
-import ru.netology.nework.entity.toEntity
 import ru.netology.nework.error.ApiError
 
 
 @OptIn(ExperimentalPagingApi::class)
-class PostRemoteMediator(
-    private val service: PostApiService,
-    private val db: AppDb,
+class WallRemoteMediator(
+    private val service: WallApiService,
     private val postDao: PostDao,
     private val postRemoteKeyDao: PostRemoteKeyDao,
+    private val db: AppDb,
+    private val userId: Long
 ) : RemoteMediator<Int, PostEntity>() {
+
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, PostEntity>,
@@ -30,9 +31,9 @@ class PostRemoteMediator(
         try {
             val response = when (loadType) {
                 LoadType.REFRESH -> {
-                    postRemoteKeyDao.max()?.let {
-                        service.getPostAfter(it, state.config.pageSize)
-                    } ?: service.getPostLatest(state.config.initialLoadSize)
+                    postDao.getPostWallMaxId(userId)?.let {
+                        service.getWallAfter(userId, it.id,state.config.pageSize)
+                    } ?: service.getWallLatest(userId, state.config.initialLoadSize)
                 }
                 LoadType.PREPEND -> {
                     return MediatorResult.Success(endOfPaginationReached = false)
@@ -41,7 +42,7 @@ class PostRemoteMediator(
                     val id = postRemoteKeyDao.min() ?: return MediatorResult.Success(
                         endOfPaginationReached = false
                     )
-                    service.getPostBefore(id, state.config.pageSize)
+                    service.getWallBefore(userId, id, state.config.pageSize)
                 }
             }
 
@@ -65,7 +66,7 @@ class PostRemoteMediator(
                         if (postRemoteKeyDao.isEmpty()) {
                             postRemoteKeyDao.insert(
                                 PostRemoteKeyEntity(
-                                    type =KeyType.BEFORE,
+                                    type = KeyType.BEFORE,
                                     id = body.last().id,
                                 )
                             )
@@ -88,7 +89,7 @@ class PostRemoteMediator(
                         )
                     }
                 }
-                postDao.insert(body.toEntity())
+                postDao.insert(body.map(PostEntity::fromDto))
             }
             return MediatorResult.Success(endOfPaginationReached = body.isEmpty())
         } catch (e: Exception) {

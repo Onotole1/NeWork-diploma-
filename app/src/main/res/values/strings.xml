@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">NeWork</string>
     <string name="avatar_description">Author avatar</string>
     <string name="menu">Menu</string>
@@ -31,6 +31,9 @@
     <string name="mentors">Mentors</string>
     <string name="participants">Participants</string>
     <string name="link">Link</string>
+    <string name="invalid_link">Invalid link</string>
+    <string name="empty_field">Empty field</string>
+
     <string name="join">Join</string>
     <string name="format">Format</string>
     <string name="cancel">Cancel</string>
@@ -90,6 +93,7 @@
     <string name="error_notification_text" />
     <string name="notification_user_liked" />
     <string name="notification_user_new_posted" />
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="invalid_password">Invalid password</string>
+    <string name="location_searching">A button to determine your location position</string>
+    <string name="use_card">"Sorry, you won\'t be able to view maps without permission to display your location"</string>
 </resources>
