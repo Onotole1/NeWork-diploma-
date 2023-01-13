@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import ru.netology.nework.dao.*
 import ru.netology.nework.entity.*
 
-@Database(entities = [PostEntity::class, PostRemoteKeyEntity::class, UserEntity::class, JobEntity::class, EventEntity::class,EventRemoteKeyEntity::class], version = 1, exportSchema = false)
+@Database(entities = [PostEntity::class, PostRemoteKeyEntity::class, UserEntity::class, JobEntity::class, EventEntity::class,RemoteKeyEntity::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDb : RoomDatabase() {
     abstract fun postDao(): PostDao
