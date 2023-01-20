@@ -12,10 +12,10 @@ import ru.netology.nework.entity.*
     PostEntity::class,
     PostRemoteKeyEntity::class,
     EventEntity::class,
-    RemoteKeyEntity::class,
+    EventRemoteKeyEntity::class,
     UserEntity::class,
     JobEntity::class,
-], version = 2, exportSchema = false)
+], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDb : RoomDatabase() {
     abstract fun postDao(): PostDao

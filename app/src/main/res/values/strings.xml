@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">NeWork</string>
+    <string name="app_name" translatable="false">NeWork</string>
 
     <string name="place_for_your_photo">Place for your photo</string>
     <string name="startDate">Start date</string>
@@ -97,9 +97,9 @@
     <string name="location">Location</string>
     <string name="use_card">"Sorry, you won\'t be able to view maps without permission to display your location"</string>
 
-    <string name="title_post">title_post</string>
-    <string name="title_event">title_event</string>
-    <string name="title_job">title_job</string>
+    <string name="title_post">post</string>
+    <string name="title_event">event</string>
+    <string name="title_job">ob</string>
 
     <string name="photo">Photo</string>
     <string name="media">Media</string>

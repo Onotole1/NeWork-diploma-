@@ -1,7 +1,5 @@
 package ru.netology.nework.entity
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.room.*
 import ru.netology.nework.dao.Converters
 import ru.netology.nework.dto.Event
@@ -9,15 +7,16 @@ import ru.netology.nework.enumeration.EventType
 
 
 @Entity(tableName = "events")
-class EventEntity(
+data class EventEntity(
     @PrimaryKey(autoGenerate = true)
-     val id: Long,
+    val id: Long,
     val authorId: Long,
     val author: String?,
     val authorAvatar: String? = null,
     val content: String,
     val datetime: String,
     val published: String,
+    @TypeConverters(Converters::class)
     @Embedded
     val coordinates: String?=null,
     @TypeConverters(Converters::class)

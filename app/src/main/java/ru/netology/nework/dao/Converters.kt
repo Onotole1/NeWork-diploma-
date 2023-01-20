@@ -1,10 +1,12 @@
 package ru.netology.nework.dao
 
+import androidx.room.Dao
 import androidx.room.TypeConverter
 import ru.netology.nework.dto.Coordinates
 import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.enumeration.EventType
 
+@Dao
 class Converters {
     @TypeConverter
     fun toAttachmentType(value: String) = enumValueOf<AttachmentType>(value)

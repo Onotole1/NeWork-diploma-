@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import ru.netology.nework.dto.User
 
 @Entity(tableName = "users")
-class UserEntity  (
+data class UserEntity  (
     @PrimaryKey(autoGenerate = true)
     val id:Long,
     val login: String?,

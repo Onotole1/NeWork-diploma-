@@ -12,10 +12,10 @@ interface EventRemoteKeyDao {
      suspend fun isEmpty(): Boolean
 
     @Query("SELECT MAX(id) FROM EventRemoteKeyEntity")
-    suspend fun max(): Long?
+    suspend fun max(): Long
 
     @Query("SELECT MIN(id) FROM EventRemoteKeyEntity")
-    suspend fun min(): Long?
+    suspend fun min(): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(key: EventRemoteKeyEntity)

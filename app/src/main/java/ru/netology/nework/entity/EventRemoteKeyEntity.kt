@@ -7,7 +7,6 @@ import ru.netology.nework.enumeration.KeyType
 @Entity
 data class EventRemoteKeyEntity(
     @PrimaryKey
+    val type: KeyType,
     val id: Long,
-    val type: KeyType
-
 )
