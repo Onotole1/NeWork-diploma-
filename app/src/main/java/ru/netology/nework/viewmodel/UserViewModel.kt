@@ -1,25 +1,28 @@
 package ru.netology.nework.viewmodel
 
 import androidx.lifecycle.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import ru.netology.nework.api.*
-import ru.netology.nework.dto.AuthState
 import ru.netology.nework.dto.User
-import ru.netology.nework.error.ApiError
-import ru.netology.nework.error.NetworkError
-import ru.netology.nework.error.UnknownError
+import ru.netology.nework.enumeration.RetryTypes
 import ru.netology.nework.model.UserModel
 import ru.netology.nework.model.UsersModelState
 import ru.netology.nework.repository.UserRepository
-import ru.netology.nework.repository.checkResponse
 import java.io.IOException
+
 import javax.inject.Inject
 
+@HiltViewModel
 class UserViewModel@Inject constructor(
     private val repository: UserRepository,
 ) : ViewModel() {
+
+    var lastId: Long? = null
+    var lastAction: RetryTypes? = null
+
+    val user = MutableLiveData<User>()
 
     val data: LiveData<UserModel> = repository.data
         .map { user ->
@@ -29,9 +32,14 @@ class UserViewModel@Inject constructor(
             )
         }.asLiveData(Dispatchers.Default)
 
-   // private var profileId = stateHandle[USER_ID] ?: appAuth.authStateFlow.value.id
+    fun tryAgain() {
+        when (lastAction) {
+            RetryTypes.LOAD -> retryGetAllUsers()
+            RetryTypes.GETBYID -> retryGetById()
+            else -> retryGetAllUsers()
+        }
+    }
 
-    val user = MutableLiveData<User>()
     private val _dataState = MutableLiveData<UsersModelState>()
     val dataState: LiveData<UsersModelState>
         get() = _dataState
@@ -41,24 +49,27 @@ class UserViewModel@Inject constructor(
         get() = _usersIds
 
     init {
-       // getUserById(profileId)
         loadUsers()
     }
     fun loadUsers() = viewModelScope.launch {
+        lastAction = RetryTypes.LOAD
         try {
             _dataState.value = UsersModelState(loading = true)
-            repository.getAll()
+            repository.getAllUsers()
             _dataState.value = UsersModelState()
         } catch (e: Exception) {
             _dataState.value = UsersModelState(error = true)
-
         }
     }
 
-    fun getUserById(id: Long) = viewModelScope.launch {
+    fun retryGetAllUsers() {
+        loadUsers()
+    }
+
+    private fun getUserById(id: Long) = viewModelScope.launch {
         try {
             _dataState.value = UsersModelState(loading = true)
-            repository.getById(id)
+            user.value = repository.getUserById(id)
             _dataState.value = UsersModelState()
         } catch (e: Exception) {
             _dataState.value = UsersModelState(error = true)
@@ -77,6 +88,16 @@ class UserViewModel@Inject constructor(
             if (id == user.id) return user.avatar
         }
         return null
+    }
+
+    fun getUsersIds(set: Set<Long>) = viewModelScope.launch {
+        _usersIds.value = set
+    }
+
+    fun retryGetById() {
+        lastId?.let {
+            getUserById(it)
+        }
     }
 
 }

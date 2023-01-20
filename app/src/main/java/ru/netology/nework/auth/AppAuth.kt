@@ -18,8 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import ru.netology.nework.api.UserApiService
 import ru.netology.nework.dto.PushToken
-import ru.netology.nework.dto.AuthState
-
+import ru.netology.nework.model.AuthState
 
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -48,7 +47,7 @@ class AppAuth @Inject constructor(
             }
         } else {
             val pushToken = PushToken(token)
-            _authStateFlow = MutableStateFlow(AuthState(id, pushToken))
+            _authStateFlow = MutableStateFlow(AuthState(id, token))
         }
         sendPushToken()
     }
@@ -64,7 +63,7 @@ class AppAuth @Inject constructor(
     @Synchronized
     fun setAuth(id: Long, token: String, longin:String) {
         val pushToken = PushToken (token)
-        _authStateFlow.value = AuthState(id, pushToken,longin)
+        _authStateFlow.value = AuthState(id, token,longin)
         with(authPrefs.edit()) {
             putLong(idKey, id)
             putString(tokenKey, token)
@@ -103,6 +102,14 @@ class AppAuth @Inject constructor(
                 e.printStackTrace()
             }
         }
+    }
+
+    private fun getApiService(context: Context): UserApiService {
+        val hiltEntryPoint = EntryPointAccessors.fromApplication(
+            context,
+            AppAuthEntryPoint::class.java
+        )
+        return hiltEntryPoint.getApiService()
     }
 
 }

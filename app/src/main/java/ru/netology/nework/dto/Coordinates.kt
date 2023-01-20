@@ -1,6 +1,6 @@
 package ru.netology.nework.dto
 
 data class Coordinates(
-    val lat: Double,
-    val long: Double,
+    var lat: Double = 0.0,
+    var long: Double = 0.0,
 )

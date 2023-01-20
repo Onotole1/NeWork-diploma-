@@ -7,6 +7,7 @@ import androidx.paging.*
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -20,8 +21,7 @@ import ru.netology.nework.api.EventApiService
 import ru.netology.nework.dao.EventDao
 import ru.netology.nework.dto.Attachment
 import ru.netology.nework.dto.Event
-import ru.netology.nework.dto.MediaUpload
-import ru.netology.nework.dto.Post
+import ru.netology.nework.dto.Media
 import ru.netology.nework.entity.EventEntity
 import ru.netology.nework.entity.toEntity
 import ru.netology.nework.enumeration.AttachmentType
@@ -55,7 +55,7 @@ class EventRepositoryImpl  @Inject constructor(
             val response = apiService.getAllEvent()
             checkResponse(response)
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            eventDao.getAll()
+            eventDao.insert(body.toEntity())
         } catch (e: ApiException) {
             throw e
         } catch (e: IOException) {
@@ -66,7 +66,7 @@ class EventRepositoryImpl  @Inject constructor(
     }
 
 
-    override suspend fun likeById(id: Long, likedByMe: Boolean) {
+    override suspend fun likeEventById(id: Long, likedByMe: Boolean) {
         try {
             val response = apiService.likeEventById(id, likedByMe)
             checkResponse(response)
@@ -86,6 +86,7 @@ class EventRepositoryImpl  @Inject constructor(
             val response = apiService.saveEvent(event)
             checkResponse(response)
             val body = response.body() ?: throw ApiError(response.code(), response.message())
+            body.copy(ownedByMe = true)
             eventDao.insert(EventEntity.fromDto(body))
         } catch (e: ApiException) {
             throw e
@@ -116,7 +117,7 @@ class EventRepositoryImpl  @Inject constructor(
             }
         }
 
-    private suspend fun upload(uri: Uri): Attachment {
+    private suspend fun upload(uri: Uri): Media {
         try {
             val contentProvider = context.contentResolver
 
@@ -177,7 +178,6 @@ class EventRepositoryImpl  @Inject constructor(
 
     override suspend fun getEventById(id: Long): Event = eventDao.getEventEventId(id)?.toDto() ?: throw DbError
 
-
     override suspend fun getMaxId(): Long = eventDao.getEventEventMaxId()?.toDto()?.id ?: throw DbError
 
     override suspend fun joinById(id: Long) {
@@ -185,6 +185,7 @@ class EventRepositoryImpl  @Inject constructor(
             val response = apiService.addParticipantEvent(id)
             checkResponse(response)
             val body = response.body() ?: throw ApiError(response.code(), response.message())
+               body.copy(participatedByMe = true)
             eventDao.insert(EventEntity.fromDto(body))
         } catch (e: ApiError) {
             throw e
@@ -195,11 +196,12 @@ class EventRepositoryImpl  @Inject constructor(
         }
     }
 
-    override suspend fun denyById(id: Long) {
+    override suspend fun leaveById(id: Long) {
         try {
             val response = apiService.removeParticipantEvent(id)
             checkResponse(response)
             val body = response.body() ?: throw ApiError(response.code(), response.message())
+            body.copy(participatedByMe = false)
             eventDao.insert(EventEntity.fromDto(body))
         } catch (e: ApiError) {
             throw e

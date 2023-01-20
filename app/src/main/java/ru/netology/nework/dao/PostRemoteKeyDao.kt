@@ -7,15 +7,15 @@ import androidx.room.Query
 import ru.netology.nework.entity.PostRemoteKeyEntity
 
 @Dao
-interface PostRemoteKeyDao:FeedRemoteKeyDao {
+interface PostRemoteKeyDao {
     @Query("SELECT COUNT(*) == 0 FROM PostRemoteKeyEntity")
-    override  suspend fun isEmpty(): Boolean
+    suspend fun isEmpty(): Boolean
 
     @Query("SELECT MAX(id) FROM PostRemoteKeyEntity")
-    override  suspend fun max(): Long?
+    suspend fun max(): Long?
 
     @Query("SELECT MIN(id) FROM PostRemoteKeyEntity")
-    override  suspend fun min(): Long?
+    suspend fun min(): Long?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(key: PostRemoteKeyEntity)
@@ -24,5 +24,5 @@ interface PostRemoteKeyDao:FeedRemoteKeyDao {
     suspend fun insert(keys: List<PostRemoteKeyEntity>)
 
     @Query("DELETE FROM PostRemoteKeyEntity ")
-    override  suspend fun removeAll()
+    suspend fun removeAll()
 }

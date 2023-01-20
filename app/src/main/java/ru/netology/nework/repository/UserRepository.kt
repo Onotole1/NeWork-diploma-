@@ -22,7 +22,7 @@ class UserRepository@Inject constructor(
     }.flowOn(Dispatchers.Default)
 
 
-    suspend fun getById(id: Long) : User{
+    suspend fun getUserById(id: Long) : User{
         try {
             val response = apiService.getUserById(id)
             checkResponse(response)
@@ -34,12 +34,12 @@ class UserRepository@Inject constructor(
         }
     }
 
-    suspend fun getAll() {
+    suspend fun getAllUsers() {
             try {
                 val response = apiService.getAllUsers()
                 checkResponse(response)
-                userDao.getAll()
-                response.body() ?: throw ApiError(response.code(), response.message())
+                val body = response.body() ?: throw ApiError(response.code(), response.message())
+                userDao.insert(body)
             } catch (e: ApiException) {
                 throw e
             } catch (e: IOException) {
@@ -47,18 +47,6 @@ class UserRepository@Inject constructor(
             } catch (e: Exception) {
                 throw UnknownError
             }
-        }
-       suspend fun getUsers(listId: Set<Long>) =
-        try {
-            listId.map {
-                val response = apiService.getUserById(it)
-                if (!response.isSuccessful) {
-                    throw ApiError(response.code(), response.message())
-                }
-                response.body()
-            }
-        } catch (e: IOException) {
-            throw NetworkError
         }
     }
 

@@ -6,13 +6,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
-import ru.netology.nework.auth.AppAuth
-import ru.netology.nework.databinding.CardUserBinding
+import ru.netology.nework.databinding.FragmentCardUserBinding
 import ru.netology.nework.dto.User
-import ru.netology.nework.util.loadCircleCrop
+import ru.netology.nework.util.uploadingAvatar
 
 interface UserOnInteractionListener {
-    fun onRemove(id: Long)
+    fun onSingleUser(user: User)
+ //   fun onRemove(id: Long)
 }
 
 class UsersAdapter(
@@ -21,7 +21,7 @@ class UsersAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val binding =
-            CardUserBinding.inflate(
+            FragmentCardUserBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -41,18 +41,21 @@ class UsersAdapter(
 }
 
 class UserViewHolder(
-    private val binding: CardUserBinding,
+    private val binding: FragmentCardUserBinding,
     private val listener: UserOnInteractionListener,
     ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(user: User) {
             binding.apply {
                 name.text = user.name
-                val avatarUrl = user.avatar ?: ""
-                avatar.loadCircleCrop(avatarUrl, R.drawable.ic_avatar)
 
-                root.setOnLongClickListener {
-                    listener.onRemove(user.id)
-                    true
+                if (user.avatar == null) {
+                    avatarI.setImageResource(R.drawable.ic_avatar)
+                } else {
+                    val avatarUrl = user.avatar
+                    uploadingAvatar(avatarI,avatarUrl)
+                }
+                cardUser.setOnClickListener {
+                    listener.onSingleUser(user)
                 }
             }
         }

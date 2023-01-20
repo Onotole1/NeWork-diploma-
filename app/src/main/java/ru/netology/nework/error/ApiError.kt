@@ -16,7 +16,7 @@ sealed class AppError(var status:Int =-1,var code: String) : RuntimeException() 
 }
 
 class ApiError(status: Int, code: String) : AppError(code=code)
-class ApiError2(status:Int, code: String, val responseBody: ResponseBody?) : AppError(status,code)
+class ApiError2(status:Int, code: String, val responseBody: ResponseBody?) : AppError(status=status,code=code)
 object NetworkError : AppError(code="error_network")
 object DbError : AppError(code="error_db")
 object UnknownError : AppError(code="error_unknown")

@@ -9,7 +9,8 @@ data class Job (
     val start: Long?,
     val finish: Long? = null,
     val link: String? = null,
-    val ownedByMe: Boolean = false
+    val ownerId: Long,
+    val ownedByMe: Boolean=false,
         ){
     companion object {
         val emptyJob = Job(
@@ -17,7 +18,8 @@ data class Job (
             name = "",
             position = "",
             start = 0L,
-            finish = null
+            finish = null,
+            ownerId = 0L
         )
     }
     fun getString():String{

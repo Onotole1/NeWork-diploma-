@@ -3,12 +3,12 @@ package ru.netology.nework.dto
 data class Post(
     override val id: Long,
     val authorId: Long,
-    val author: String,
+    val author: String?,
     val authorAvatar: String?=null,
     val content: String,
     val published: String,
     /*координаты события*/
-    val coordinates: Coordinates?=null,
+    val coordinates: String? =null,
     val attachment: Attachment? = null,
     /**
      * Ссылка на связанный ресурс, например:
@@ -34,7 +34,7 @@ data class Post(
     companion object {
         val emptyPost = Post(
             id = 0,
-            author=User.nuller.name,
+            author = User.nuller.name,
             authorId = User.nuller.id,
             content = "",
             published = "2021-08-17T16:46:58.887547Z"

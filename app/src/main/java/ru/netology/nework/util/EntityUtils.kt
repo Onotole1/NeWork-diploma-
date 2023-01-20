@@ -1,4 +1,6 @@
-package ru.netology.nework.entity
+package ru.netology.nework.util
+
+
 const val LIST_DELIMITER = ','
 @JvmName("toEntityLong")
 internal fun List<Long>.fromDto(): String {

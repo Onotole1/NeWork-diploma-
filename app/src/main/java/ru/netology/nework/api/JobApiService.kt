@@ -1,19 +1,17 @@
 package ru.netology.nework.api
 
-import androidx.room.Query
 import retrofit2.Response
 import retrofit2.http.*
 import ru.netology.nework.dto.Job
-import ru.netology.nework.dto.Post
-import ru.netology.nework.entity.JobEntity
+
 
 interface JobApiService:ApiService {
 
     @GET("my/jobs")
-    suspend fun getMyJobs(): Response<List<JobEntity>>
+    suspend fun getCurrentMyJobs(): Response<List<Job>>
 
     @GET("{user_id}/jobs")
-    suspend fun getJobsByUserId(@Path("id") id: Long): Response<List<JobEntity>>
+    suspend fun getJobsByUserId(@Path("user_id") ownedId: Long): Response<List<Job>>
 
 
     @DELETE("my/jobs/{job_id}")

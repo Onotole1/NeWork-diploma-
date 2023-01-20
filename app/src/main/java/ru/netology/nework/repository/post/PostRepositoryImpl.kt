@@ -65,6 +65,7 @@ class PostRepositoryImpl @Inject constructor(
             throw UnknownError
         }
     }
+
     override suspend fun shareById(id: Long) {
         Log.e("PostRepositoryImpl", "Share is not yet implemented")
     }
@@ -92,8 +93,7 @@ class PostRepositoryImpl @Inject constructor(
     }
         .flowOn(Dispatchers.Default)
 
-
-    override suspend fun save(post: Post, retry: Boolean) {
+    override suspend fun save(post: Post) {
         try {
             val response = apiService.savePost(post)
             checkResponse(response)
@@ -106,36 +106,13 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun saveWithAttachment(post: Post, uri: Uri, type: AttachmentType) {
+    override suspend fun upload(upload: MediaUpload): Media {
         try {
-            val media = if(!uri.toString().contains("http")) upload(uri).uri else uri.toString()
-
-            val postWithAttachment = post.copy(
-                attachment = Attachment(
-                    uri = media,
-                    type = type
-                )
-            )
-            save(postWithAttachment,false)
-        } catch (e: AppError) {
-            throw e
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError()
-        }
-    }
-
-    private suspend fun upload(uri: Uri): Attachment {
-        try {
-            val contentProvider = context.contentResolver
-
-            val body = withContext(Dispatchers.IO) {
-                contentProvider?.openInputStream(uri)?.readBytes()
-            }?.toRequestBody("*/*".toMediaType()) ?: error("File not found")
-
             val media = MultipartBody.Part.createFormData(
-                "file", "name", body
+                "file", "name", upload.inputStream.readBytes()
+                    .toRequestBody(
+                        "*/*".toMediaType()
+                    )
             )
 
             val response = apiService.uploadMedia(media)
@@ -148,12 +125,12 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload, type: AttachmentType,retry: Boolean) {
+    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload, type: AttachmentType) {
         try {
-            val media = uploadWithContent(upload,apiService)
+            val media = upload(upload)
             val postWithAttachment =
-                post.copy(attachment = Attachment(media.uri, media.type))
-            save(postWithAttachment,false)
+                post.copy(attachment = Attachment(media.uri, type))
+            save(postWithAttachment)
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -190,22 +167,6 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun getMaxId() = postDao.getPostMaxId()?.toDto()?.id ?: throw DbError
 
-    override suspend fun processWork(id: Long) {
-        try {
-            val entity = postDao.getPostById(id)
-            val post = entity?.toDto()
-            val uri = entity?.attachment?.uri?.toUri()
-            val type = entity?.attachment?.type
-            if (uri != null && type != null) {
-                post?.let { saveWithAttachment(it, uri, type) }
-            } else {
-                post?.let { save(it,false) }
-            }
-            postDao.removeById(id)
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }
     override suspend fun getLatest() {
         try {
             val response = apiService.getPostLatest(10)

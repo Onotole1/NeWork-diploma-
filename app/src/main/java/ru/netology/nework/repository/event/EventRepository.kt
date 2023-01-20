@@ -15,7 +15,7 @@ interface EventRepository {
 
     fun getNewerCount(): Flow<Int>
 
-    suspend fun likeById(id: Long, likedByMe: Boolean)
+    suspend fun likeEventById(id: Long, likedByMe: Boolean)
 
     suspend fun save(event: Event)
 
@@ -25,7 +25,7 @@ interface EventRepository {
 
     suspend fun getMaxId(): Long
     suspend fun joinById(id: Long)
-    suspend fun denyById(id: Long)
+    suspend fun leaveById(id: Long)
 
     suspend fun shareById(id: Long)
 

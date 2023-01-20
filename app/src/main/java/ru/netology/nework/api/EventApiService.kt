@@ -1,8 +1,10 @@
 package ru.netology.nework.api
 
 import androidx.room.Query
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
+import ru.netology.nework.dto.Attachment
 import ru.netology.nework.dto.Event
 
 interface EventApiService:ApiService {
@@ -53,5 +55,5 @@ interface EventApiService:ApiService {
 
     @DELETE("events/{event_id}/participants")
     suspend fun removeParticipantEvent(@Path("id") id: Long): Response<Event>
-    
+
 }

@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/eventLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -57,15 +58,6 @@
             app:layout_constraintGuide_begin="@dimen/commonSpacingXXLarge" />
 
         <TextView
-            android:id="@+id/nameEvent"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/commonSpacingXLarge"
-            android:text="@string/event_name"
-            app:layout_constraintBottom_toBottomOf="@id/content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/content"
-            />
-        <TextView
             android:id="@+id/content"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -106,7 +98,7 @@
             app:layout_constraintTop_toBottomOf="@id/author" />
 
         <TextView
-            android:id="@+id/dt"
+            android:id="@+id/datetime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/commonSpacingSmall"
@@ -116,6 +108,26 @@
             app:layout_constraintTop_toBottomOf="@id/author"
             tools:text="2022-06-20 15:00:00" />
         <TextView
+            android:id="@+id/datetimegoHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/commonSpacingSmall"
+            android:paddingStart="@dimen/commonSpacingSmall"
+            android:text="@string/time_go"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/datetime" />
+
+        <TextView
+            android:id="@+id/datetimego"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/commonSpacingSmall"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/headerLine"
+            app:layout_constraintTop_toBottomOf="@id/datetime"
+            tools:text="10 hours" />
+        <TextView
             android:id="@+id/typeHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -123,7 +135,7 @@
             android:paddingStart="@dimen/commonSpacingSmall"
             android:text="@string/format"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dt" />
+            app:layout_constraintTop_toBottomOf="@id/datetimego" />
 
         <TextView
             android:id="@+id/type"
@@ -133,7 +145,7 @@
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/headerLine"
-            app:layout_constraintTop_toBottomOf="@id/dt"
+            app:layout_constraintTop_toBottomOf="@id/datetimego"
             tools:text="ONLINE" />
         <TextView
             android:id="@+id/speakersHeader"
@@ -184,6 +196,16 @@
             app:layout_constraintStart_toEndOf="@id/headerLine"
             app:layout_constraintTop_toBottomOf="@id/listSpeakers"
             tools:listitem="@layout/card_user" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/join"
+            style="@style/Widget.AppTheme.CheckButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/commonSpacingSmall"
+            android:text="@string/join"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/listParticipants" />
         <TextView
             android:id="@+id/linkHeader"
             android:layout_width="wrap_content"
@@ -192,7 +214,7 @@
             android:paddingStart="@dimen/commonSpacingSmall"
             android:text="@string/link"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/listParticipants" />
+            app:layout_constraintTop_toBottomOf="@id/join" />
 
         <TextView
             android:id="@+id/link"
@@ -207,28 +229,66 @@
             android:linksClickable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/headerLine"
-            app:layout_constraintTop_toBottomOf="@id/listParticipants"
+            app:layout_constraintTop_toBottomOf="@id/join"
             tools:text="https://netology.ru/free" />
 
-        <ImageView
-            android:id="@+id/attachment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/link"
-            android:contentDescription="@string/link" />
-
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/join"
+            android:id="@+id/coordinates"
+            style="@style/Widget.AppTheme.CheckButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/commonSpacingSmall"
-            android:text="@string/join"
+            android:layout_gravity="center_horizontal"
+            app:icon="@drawable/ic_location"
+            android:layout_marginStart="@dimen/marginStart"
+            app:layout_constraintBottom_toTopOf="@id/imageAttachment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/link"
+            tools:ignore="DuplicateClickableBoundsCheck"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/imageAttachment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="matrix"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/coordinates"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/attachment" />
+            app:layout_constraintTop_toBottomOf="@+id/coordinates"
+            tools:ignore="ContentDescription" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/audioPlay"
+            style="@style/Widget.AppTheme.CheckButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/audio"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/imageAttachment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/videoPlay"
+            style="@style/Widget.AppTheme.CheckButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/video"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/audioPlay"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/downer_menu_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:barrierMargin="@dimen/commonSpacingMedium"
+            app:constraint_referenced_ids="content, videoPlay" />
+
+
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/footerBarrier"
@@ -236,7 +296,8 @@
             android:layout_height="0dp"
             android:layout_margin="@dimen/commonSpacingSmall"
             app:barrierDirection="bottom"
-            app:constraint_referenced_ids="join" />
+            app:layout_constraintTop_toBottomOf="@id/videoPlay"
+            app:constraint_referenced_ids="content, videoPlay" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/like"

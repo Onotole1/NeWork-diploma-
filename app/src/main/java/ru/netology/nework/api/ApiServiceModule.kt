@@ -19,14 +19,34 @@ private const val BASE_URL = "${BuildConfig.BASE_URL}/api/"
 @InstallIn(SingletonComponent::class)
 @Module
 object ApiServiceModule {
-    @Provides
     @Singleton
-    fun provideApiService(auth: AppAuth): ApiService {
+    @Provides
+    fun provideEventApiService(auth: AppAuth): EventApiService {
         return retrofit(okhttp(loggingInterceptor(), authInterceptor(auth)))
-            .create(ApiService::class.java)
+            .create(EventApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideJobApiService(auth: AppAuth): JobApiService {
+        return retrofit(okhttp(loggingInterceptor(), authInterceptor(auth)))
+            .create(JobApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providePostApiService(auth: AppAuth): PostApiService {
+        return retrofit(okhttp(loggingInterceptor(), authInterceptor(auth)))
+            .create(PostApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideUserApiService(): UserApiService {
+        return retrofit(okhttp(loggingInterceptor()))
+            .create(UserApiService::class.java)
     }
 }
-
 fun loggingInterceptor() = HttpLoggingInterceptor()
     .apply {
         if (BuildConfig.DEBUG) {

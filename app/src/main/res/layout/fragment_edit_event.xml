@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.EditEventFragment">
+    tools:context=".ui.event.EditEventFragment">
 
   <ScrollView
       android:layout_width="match_parent"
@@ -30,10 +30,12 @@
             android:gravity="center_vertical"
             android:text="@string/date" />
 
-        <EditText
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/date_edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:text="@string/date"
+            style="@style/Widget.AppTheme.CheckButton"
             android:cursorVisible="false"
             android:focusable="false"
             android:importantForAutofill="no"
@@ -44,6 +46,17 @@
             tools:ignore="LabelFor,TextFields"
              />
       </TableRow>
+      <CalendarView
+          android:id="@+id/calendar"
+          android:gravity="center"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="@color/calendar_tint"
+          android:visibility="visible"
+          app:layout_constraintBottom_toBottomOf="@id/date_edit"
+          app:layout_constraintStart_toStartOf="parent">
+
+      </CalendarView>
 
       <TableRow
           android:id="@+id/tableRowDateTime"
@@ -60,8 +73,10 @@
             android:layout_height="@dimen/commonSpacingSLarge"
             android:text="@string/time" />
 
-        <EditText
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/time_edit"
+            style="@style/Widget.AppTheme.CheckButton"
+            android:text="@string/time"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:cursorVisible="false"
@@ -70,8 +85,26 @@
             android:longClickable="false"
             app:layout_constraintTop_toBottomOf="parent"
             tools:ignore="LabelFor,TextFields" />
-      </TableRow>
 
+      <TimePicker
+          android:id="@+id/timer"
+          style="@style/Widget.AppTheme.CheckButton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:layout_constraintTop_toTopOf="@+id/time"
+          app:layout_constraintStart_toStartOf="@+id/time"
+          android:background="@color/calendar_tint"
+          android:visibility="gone">
+
+        <Button
+            android:id="@+id/set_time"
+            style="@style/Widget.AppTheme.CheckButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:text="@string/set_time"/>
+      </TimePicker>
+      </TableRow>
       <TableRow
           android:id="@+id/tableRowFormat"
           android:layout_width="match_parent"
@@ -137,18 +170,22 @@
             android:gravity="center_vertical"
             android:text="@string/event_location" />
 
-        <EditText
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.AppTheme.CheckButton"
             android:id="@+id/coord_edit"
             android:layout_width="@dimen/commonSpacingColum"
+            android:text="@string/event_location"
             android:layout_height="wrap_content"
             android:importantForAutofill="no"
             tools:ignore="LabelFor,TextFields"
             app:layout_constraintEnd_toStartOf="@id/editLocation"
-
+            android:src="@drawable/ic_location"/>
             />
-
-        <ImageButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/editLocation"
+            android:checkable="true"
+            tools:checked="true"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/location"
@@ -169,7 +206,7 @@
             android:gravity="center_vertical"
             android:text="@string/speakers" />
 
-        <EditText
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/speakers_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -178,10 +215,46 @@
             android:longClickable="false"
             android:cursorVisible="false"
             android:importantForAutofill="no"
+            tools:listitem="@layout/card_user"
             tools:ignore="LabelFor,TextFields" />
+      </TableRow>
+      <TableRow
+          android:id="@+id/tableRowParticipants"
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/commonSpacingXLarge"
+          android:layout_margin="@dimen/marginEnd"
+          android:orientation="vertical">
+        <TextView
+            android:id="@+id/participantsHeader"
+            android:layout_width="@dimen/commonSpacingXSLarge"
+            android:layout_height="@dimen/commonSpacingXLarge"
+            android:gravity="center_vertical"
+            android:text="@string/participants" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/participants_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:focusable="false"
+            android:longClickable="false"
+            android:cursorVisible="false"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor,TextFields"
+            tools:listitem="@layout/card_user" />
       </TableRow>
 
+
+      <com.google.android.material.button.MaterialButton
+          android:id="@+id/join"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:gravity="center"
+          android:text="@string/join"
+          style="@style/Widget.AppTheme.CheckButton"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/edit" />
 
       <EditText
           android:id="@+id/edit"
@@ -208,7 +281,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:contentDescription="@string/description_photo"
+            android:contentDescription="@string/photo"
             tools:srcCompat="@tools:sample/avatars[2]" />
 
         <Button
@@ -230,7 +303,7 @@
             android:id="@+id/audio"
             android:layout_width="@dimen/commonSpacingXSLarge"
             android:layout_height="@dimen/commonSpacingXSLarge"
-            android:contentDescription="@string/description_audio"
+            android:contentDescription="@string/audio"
             android:src="@drawable/ic_music"
             android:layout_gravity="bottom|center_horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -261,17 +334,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
-        android:contentDescription="@string/description_pick_photo"
+        android:contentDescription="@string/pick_photo"
         android:padding="@dimen/commonSpacingMedium"
         android:src="@drawable/ic_attach_file_48" />
 
 
     <ImageView
-        android:id="@+id/description_photo"
+        android:id="@+id/take_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
-        android:contentDescription="@string/description_take_photo"
+        android:contentDescription="@string/take_photo"
         android:padding="@dimen/commonSpacingMedium"
         android:src="@drawable/ic_baseline_photo_camera_48" />
 
@@ -280,7 +353,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
-        android:contentDescription="@string/description_take_media"
+        android:contentDescription="@string/take_media"
         android:padding="@dimen/commonSpacingMedium"
         android:src="@drawable/ic_music" />
 

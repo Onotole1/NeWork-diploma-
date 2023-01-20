@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.SignUpFragment">
+    tools:context=".ui.auth.SignUpFragment">
 
     <ScrollView
         android:id="@+id/signUpView"
@@ -30,13 +30,38 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_avatar"
+                android:gravity="center"
+                android:layout_width="@dimen/commonSpacingXXLarge"
+                android:layout_height="@dimen/commonSpacingXXLarge"
+                android:layout_marginTop="@dimen/commonSpacingXLarge"
+                android:elevation="@dimen/commonSpacingMedium"
+                app:cardCornerRadius="@dimen/commonSpacingSLarge"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:contentDescription="@string/place_for_your_photo"
+                    android:focusable="true"
+
+                    android:src="@drawable/ic_avatar"
+                    app:layout_constraintStart_toStartOf="@id/cardView_avatar"
+                    app:layout_constraintTop_toTopOf="@id/cardView_avatar" />
+            </androidx.cardview.widget.CardView>
+
             <TextView
                 android:id="@+id/textLogin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/login"
-                app:layout_constraintBottom_toTopOf="@+id/login"
-                app:layout_constraintStart_toStartOf="@+id/login" />
+                app:layout_constraintBottom_toTopOf="@+id/name"
+                app:layout_constraintStart_toStartOf="@id/name" />
 
             <EditText
                 android:id="@+id/login"
@@ -49,7 +74,7 @@
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/signUpName"
+                app:layout_constraintTop_toBottomOf="@+id/cardView_avatar"
                 tools:ignore="LabelFor,SpeakableTextPresentCheck" />
 
             <TextView
@@ -119,6 +144,8 @@
                 app:layout_constraintTop_toBottomOf="@+id/password"
                 tools:ignore="LabelFor,SpeakableTextPresentCheck" />
 
+
+
             <Button
                 android:id="@+id/signUpButton"
                 android:layout_width="wrap_content"
@@ -129,6 +156,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/repeatPassword" />
+
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

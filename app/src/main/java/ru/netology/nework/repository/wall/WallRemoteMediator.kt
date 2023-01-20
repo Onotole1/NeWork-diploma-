@@ -1,4 +1,4 @@
-package ru.netology.nework.repository
+package ru.netology.nework.repository.wall
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
@@ -9,7 +9,7 @@ import ru.netology.nework.api.WallApiService
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.db.AppDb
-import ru.netology.nework.entity.KeyType
+import ru.netology.nework.enumeration.KeyType
 import ru.netology.nework.entity.PostEntity
 import ru.netology.nework.entity.PostRemoteKeyEntity
 import ru.netology.nework.error.ApiError

@@ -12,7 +12,6 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
-import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.CardAdBinding
 import ru.netology.nework.databinding.CardPostBinding
 import ru.netology.nework.databinding.CardTextItemSeparatorBinding
@@ -22,24 +21,26 @@ import ru.netology.nework.util.*
 import ru.netology.nework.viewmodel.UserViewModel
 
 
-interface OnInteractionListener {
-    fun onLikeListener(feed: FeedItem) {}
-    fun onShareListener(feed: FeedItem) {}
-    fun onRemoveListener(feed: FeedItem) {}
-    fun onEditListener(feed: FeedItem) {}
+interface OnPostInteractionListener {
+    fun onLikeListener(post: Post) {}
+    fun onShareListener(post: Post) {}
+    fun onRemoveListener(post: Post) {}
+    fun onEditListener(post: Post) {}
     fun onFeedListener(feed: FeedItem) {}
-    fun onHideListener(feed: FeedItem) {}
-    fun onPlaceWorkListener(feed: FeedItem){}
-    fun onMentorsListener(feed: FeedItem) {}
+    fun onHideListener(post: Post) {}
+    fun onPlaceWorkListener(post: Post){}
+    fun onMentorsListener(post: Post) {}
     fun onFullscreenAttachment(attachmentUrl: String) {}
-    fun onLikeOwnerListener(feed: FeedItem) {}
-    fun onMap(feed: FeedItem)
-    fun onAuth()
+    fun onLikeOwnerListener(post: Post) {}
+    fun onPlayVideo(post: Post)
+    fun onPlayAudio(post: Post)
+    fun onMap(post: Post)
+  //  fun onAuth()
 }
 
 class FeedAdapter(
-    private val listener: OnInteractionListener,
-    private val appAuth: AppAuth,
+    private val listener: OnPostInteractionListener,
+//    private val appAuth: AppAuth,
     private val userViewModel: UserViewModel,
     private val lifecycleOwner: LifecycleOwner
 ) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(PostDiffCallback()) {
@@ -57,19 +58,23 @@ class FeedAdapter(
             R.layout.card_post -> {
                 val binding =
                     CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                PostViewHolder(binding, listener, appAuth, userViewModel, lifecycleOwner)
+                PostViewHolder(binding,
+                    listener,
+                    //appAuth,
+                    userViewModel,
+                    lifecycleOwner)
             }
             R.layout.card_ad -> {
                 val binding =
                     CardAdBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                AdViewHolder(binding, listener, appAuth)
+                AdViewHolder(binding, listener)
             }
             R.layout.card_text_item_separator -> {
                 val binding =
                     CardTextItemSeparatorBinding.inflate(LayoutInflater.from(parent.context),
                         parent,
                         false)
-                TextItemViewHolder(binding, listener, appAuth)
+                TextItemViewHolder(binding)
             }
             else -> error("unknow item type $viewType")
         }
@@ -108,8 +113,6 @@ class FeedAdapter(
 
 class TextItemViewHolder(
     private val binding: CardTextItemSeparatorBinding,
-    private val listener: OnInteractionListener,
-    private val appAuth: AppAuth,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(textItemSeparator: TextItemSeparator) {
         binding.text.text = textItemSeparator.text
@@ -118,9 +121,9 @@ class TextItemViewHolder(
 
 class AdViewHolder(
     private val binding: CardAdBinding,
-    private val listener: OnInteractionListener,
-    private val appAuth: AppAuth,
-) : RecyclerView.ViewHolder(binding.root) {
+    private val listener: OnPostInteractionListener,
+
+    ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(ad: Ad) {
         uploadingMedia(binding.imageAd, ad.name)
         binding.imageAd.setOnClickListener {
@@ -129,11 +132,10 @@ class AdViewHolder(
     }
 }
 
-
 class PostViewHolder(
     private val binding: CardPostBinding,
-    private val listener: OnInteractionListener,
-    private val appAuth: AppAuth,
+    private val listener: OnPostInteractionListener,
+  //  private val appAuth: AppAuth,
     private val userViewModel: UserViewModel,
     private val lifecycleOwner: LifecycleOwner
 ) : RecyclerView.ViewHolder(binding.root) {
@@ -165,7 +167,7 @@ class PostViewHolder(
         binding.apply {
 
             author.text = post.author
-            published.text = post.published.toString()
+            published.text = post.published
             content.text = post.content
 
             if (post.coordinates != null) {
@@ -173,7 +175,7 @@ class PostViewHolder(
                 coordinates.setOnClickListener { listener.onMap(post)}
             }
 
-            menu.visibility = if (post.ownedByMe) View.VISIBLE else View.INVISIBLE
+            menu.isVisible  = post.ownedByMe
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.object_options)
@@ -203,35 +205,45 @@ class PostViewHolder(
                 uploadingAvatar(avatar, post.authorAvatar)
             }
 
-            attachment.isVisible = post.attachment?.type == AttachmentType.IMAGE
-            if (post.attachment != null) {
-                uploadingMedia(attachment, post.attachment.url)
-                attachment.isVisible = true
-                attachment.setOnClickListener {
-                    listener.onFullscreenAttachment(post.attachment.url)
-                }
-            } else {
-                attachment.isVisible = false
+            imageAttachment.visibility =
+                if (post.attachment != null && post.attachment.type == AttachmentType.IMAGE)
+                    View.VISIBLE else View.GONE
+            audioPlay.visibility =
+                if (post.attachment != null && post.attachment.type == AttachmentType.AUDIO)
+                    View.VISIBLE else View.GONE
+            videoPlay.visibility =
+                if (post.attachment != null && post.attachment.type == AttachmentType.VIDEO)
+                    View.VISIBLE else View.GONE
+
+            imageAttachment.setOnClickListener {
+                    post.attachment?.let { listener.onFullscreenAttachment(it.uri) }
+            }
+            audioPlay.setOnClickListener {
+                listener.onPlayAudio(post)
             }
 
+            videoPlay.setOnClickListener {
+                listener.onPlayVideo(post)
+            }
+
+            val usersAdapter = UsersAdapter(object : UserOnInteractionListener {
+                override fun onSingleUser(user: User) {}
+            })
 
             val mentorslist = post.mentorsNames ?: emptyList()
             mentors.isVisible = mentorslist.isNotEmpty()
             mentorsEdit.isVisible = mentorslist.isNotEmpty()
             if (mentorslist.isNotEmpty()) {
                 listener.onMentorsListener(post)
-                val mentorsAdapter = UsersAdapter(object : UserOnInteractionListener {
-                    override fun onRemove(id: Long) = Unit
-                })
-                mentorsEdit.adapter = mentorsAdapter
+                mentorsEdit.adapter = usersAdapter
                 userViewModel.data.observe(lifecycleOwner) { users ->
                     val mentors = users.users.filter { it.id in post.mentionIds }
-                    mentorsAdapter.submitList(mentors)
+                    usersAdapter.submitList(mentors)
                 }
 
             }
 
-            val likersList = post.likeOwnerIds ?: emptyList()
+            val likersList = post.likeOwnerIds
 
             like.isChecked = post.likedByMe
             likers.text = numbersToString(post.likeOwnerIds.size)
@@ -268,10 +280,10 @@ class PostViewHolder(
             }
 
             like.setOnClickListener {
-                if (appAuth.authStateFlow.value.id == 0L) {
-                    listener.onAuth()
-                    return@setOnClickListener
-                }
+           //   if (appAuth.authStateFlow.value.id == 0L) {
+             //       listener.onAuth()
+            //        return@setOnClickListener
+              //  }
                 listener.onLikeListener(post)
             }
             share.setOnClickListener {
@@ -289,7 +301,6 @@ class PostViewHolder(
                 content.context.getString(
                     R.string.work
                 )
-
             }
 
             if (post.link!=null) {

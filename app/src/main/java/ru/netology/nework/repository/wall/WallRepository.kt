@@ -4,7 +4,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.*
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -21,6 +20,7 @@ import ru.netology.nework.error.ApiError
 import ru.netology.nework.error.DbError
 import ru.netology.nework.error.NetworkError
 import ru.netology.nework.error.UnknownError
+import ru.netology.nework.repository.wall.WallRemoteMediator
 import java.io.IOException
 import javax.inject.Inject
 

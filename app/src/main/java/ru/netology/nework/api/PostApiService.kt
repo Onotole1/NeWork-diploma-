@@ -1,11 +1,13 @@
 package ru.netology.nework.api
 
 import androidx.room.Query
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
+import ru.netology.nework.dto.Attachment
 import ru.netology.nework.dto.Post
 
-interface PostApiService :ApiService {
+interface PostApiService:ApiService  {
     @GET("posts")
     suspend fun getAllPost(): Response<List<Post>>
 

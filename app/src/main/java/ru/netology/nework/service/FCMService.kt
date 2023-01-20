@@ -1,5 +1,6 @@
 package ru.netology.nework.service
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -77,6 +78,7 @@ class FCMService : FirebaseMessagingService() {
         }
     }
 
+    @SuppressLint("StringFormatInvalid")
     private fun sendNotification(push: Push) {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -120,6 +122,7 @@ class FCMService : FirebaseMessagingService() {
             .notify(Random.nextInt(100_000), notification)
     }
 
+    @SuppressLint("StringFormatInvalid")
     private fun handleLike(content: Like) {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -137,6 +140,7 @@ class FCMService : FirebaseMessagingService() {
             .notify(Random.nextInt(100_000), notification)
     }
 
+    @SuppressLint("StringFormatInvalid")
     private fun handleNewPost(content: NewPost) {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)

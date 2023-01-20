@@ -14,28 +14,31 @@ import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
 import ru.netology.nework.dto.Post.Companion.emptyPost
 import ru.netology.nework.enumeration.AttachmentType
+import ru.netology.nework.enumeration.RetryTypes
 import ru.netology.nework.enumeration.SeparatorTimeType
-import ru.netology.nework.model.FeedModelState
-import ru.netology.nework.model.FileModel
+import ru.netology.nework.model.*
+import ru.netology.nework.repository.WallRepositoryImpl
 import ru.netology.nework.repository.post.PostRepository
+import ru.netology.nework.ui.user.USER_ID
 import ru.netology.nework.util.*
+import java.io.InputStream
 
-import java.io.File
 import java.text.SimpleDateFormat
 import javax.inject.Inject
 import kotlin.random.Random
 
-
-private val noPhoto = FileModel()
+private val noMedia = MediaModel()
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class PostViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val repository: PostRepository,
+    private val wallRepository: WallRepositoryImpl,
     private val auth: AppAuth,
-    private val currentTime: CurrentTimes
-) : ViewModel() {
+    private val currentTime: CurrentTimes,
+    private val stateHandle: SavedStateHandle,
+    ) : ViewModel() {
 
     private val cached
         get() = repository.data.cachedIn(viewModelScope)
@@ -94,7 +97,6 @@ class PostViewModel @Inject constructor(
             }
         }
 
-
     val authenticated = auth
         .authStateFlow.map { it.id != 0L }
         .asLiveData(Dispatchers.Default)
@@ -111,10 +113,9 @@ class PostViewModel @Inject constructor(
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
-    private val noFile = FileModel()
-    private val _file = MutableLiveData(noFile)
-    val file: LiveData<FileModel>
-        get() = _file
+    private val _media = MutableLiveData(noMedia)
+    val media: LiveData<MediaModel>
+        get() = _media
 
     private var _mentionIds: MutableSet<Long> = mutableSetOf()
 
@@ -125,38 +126,21 @@ class PostViewModel @Inject constructor(
         _edited.value = emptyPost
     }
 
-    private val hidePosts = mutableSetOf<Post>()
+    val hidePosts = mutableSetOf<Post>()
 
     fun hidePost(post:Post) {
         hidePosts.add(post)
     }
+
     private val scope = MainScope()
 
     init {
         loadPosts()
     }
 
-    fun changeFile(uri: Uri?, type: AttachmentType?) {
-        _file.value = FileModel(uri, type=type)
-        edited.value?.let {
-            _edited.value = it.copy(
-                attachment = null
-            )
-        }
-    }
-
-    fun changePhoto(uri: Uri?, file: File?) {
-        _file.value = if (uri != null && file != null) {
-            FileModel(uri, file)
-        } else {
-            null
-        }
-    }
-
     fun forAuthenticated() {
         _edited.postValue(emptyPost.copy(authorId = auth.authStateFlow.value.id))
     }
-
 
     fun loadPosts() = viewModelScope.launch {
         try {
@@ -164,7 +148,13 @@ class PostViewModel @Inject constructor(
             repository.getAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
-            _dataState.value = FeedModelState(error = true)
+            _dataState.value = FeedModelState(error = true, retryType = RetryTypes.LOAD)
+        }
+    }
+
+    fun attachmentRepost(attachment: Attachment) {
+        edited.value?.let {
+            _edited.value = it.copy(attachment = attachment)
         }
     }
 
@@ -184,7 +174,7 @@ class PostViewModel @Inject constructor(
             repository.getAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
-            _dataState.value = FeedModelState(error = true)
+            _dataState.value = FeedModelState(error = true, retryType = RetryTypes.RETRY)
         }
     }
 
@@ -201,19 +191,25 @@ class PostViewModel @Inject constructor(
         _edited.value = edited.value?.copy(content = text)
     }
 
+    fun changeContent(content: String,coord: Coordinates?) {
+        edited.value?.let {
+            val text = content.trim()
+        if (it.content != text ||
+            it.coordinates != coord )
+            _edited.value = it.copy(content = text, coordinates = coord)
+    }
+    }
 
     fun save() {
-        edited.value?.let {
+        edited.value?.let {post ->
             _postCreated.value = Unit
             viewModelScope.launch {
+                _dataState.postValue(FeedModelState(loading = true))
                 try {
-                    repository.saveWithAttachment(
-                        it, _file.value?.uri?.let { MediaUpload(it) }!!, _file.value?.type!!,false
-                    )
-                    when (_file.value) {
-                        noFile -> repository.save(it,false)
-                        else -> _file.value?.uri?.let { uri ->
-                            repository.saveWithAttachment(it, MediaUpload(uri),AttachmentType.IMAGE, false)
+                    when (_media.value) {
+                        noMedia  -> repository.save(post)
+                        else -> _media.value?.inputStream?.let { MediaUpload(it) }
+                            ?.let { repository.saveWithAttachment(post,it,_media.value?.type!!)
                         }
                     }
                     _dataState.value = FeedModelState()
@@ -223,7 +219,11 @@ class PostViewModel @Inject constructor(
             }
         }
         _edited.value = emptyPost
-        _file.value = noPhoto
+        _media.value = noMedia
+    }
+
+    fun changeMedia(uri: Uri?, inputStream: InputStream?, type: AttachmentType?) {
+        _media.value = MediaModel(uri, inputStream, type)
     }
 
     fun save(content: String) = viewModelScope.launch {
@@ -235,7 +235,7 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 if (post != null) {
-                    repository.save(post,false)
+                    repository.save(post)
                     loadPosts()
                 }
             } catch (e: Exception) {
@@ -268,6 +268,14 @@ class PostViewModel @Inject constructor(
         return _mentionIds.any { it == id }
     }
 
+    fun changeMentionIds(id: Long) {
+        _edited.value?.let {
+            if (_edited.value?.mentionIds?.contains(id) == false) {
+                _edited.value = _edited.value?.copy(mentionIds = it.mentionIds.plus(id))
+            }
+        }
+    }
+
     fun saveMention() {
         _edited.value = edited.value?.copy(mentionIds = _mentionIds)
         clearMention()
@@ -281,9 +289,48 @@ class PostViewModel @Inject constructor(
         _edited.value = edited.value?.copy(coordinates = Coordinates(latitude, longitude))
     }
 
+    fun saveCoordinates(coordinates:Coordinates) {
+        _edited.value = edited.value?.copy(coordinates = coordinates)
+    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val userWall: Flow<PagingData<FeedItem>> =  auth.authStateFlow
+        .flatMapLatest { (myId, _) ->
+            wallRepository.userWall(stateHandle[USER_ID] ?: myId).map { pagingData ->
+                pagingData.map { post ->
+                    post.copy(
+                        published = SimpleDateFormat("dd.MM.yy HH:mm:ss").format(
+                            post.published.toLong() * 1000L),
+                        likedByMe = post.likeOwnerIds.contains(myId),
+                        mentionedMe= post.mentionIds.contains(myId),
+                        ownedByMe = post.authorId == myId,
+                    )
+                }
+            }
+        }
+    fun refreshWall(userId:Long) = viewModelScope.launch {
+        try {
+            _dataState.value = FeedModelState(refreshing = true)
+            wallRepository.userWall(userId)
+            _dataState.value = FeedModelState()
+        } catch (e: Exception) {
+            _dataState.value = FeedModelState(error = true)
+        }
+    }
+
+    fun loadWallPosts(userId:Long) = viewModelScope.launch {
+        try {
+            _dataState.value = FeedModelState(loading = true)
+            wallRepository.userWall(userId)
+            _dataState.value = FeedModelState()
+        } catch (e: Exception) {
+            _dataState.value = FeedModelState(error = true)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         scope.cancel()
     }
+
 }
 

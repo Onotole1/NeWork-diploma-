@@ -6,62 +6,102 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
-import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.*
-import ru.netology.nework.dto.Event
-import ru.netology.nework.dto.Payload
+import ru.netology.nework.dto.*
+import ru.netology.nework.enumeration.AttachmentType
 import ru.netology.nework.util.*
 import ru.netology.nework.viewmodel.UserViewModel
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 interface EventListener {
     fun onLikeListener(event: Event) {}
     fun onShareListener(event: Event) {}
     fun onRemoveListener(event: Event) {}
     fun onEditListener(event: Event) {}
-    fun onFeedListener(event: Event) {}
+    fun onFeedListener(feed: FeedItem) {}
     fun onHideListener(event: Event) {}
     fun onFullscreenAttachment(attachmentUrl: String) {}
     fun onMap(event: Event) {}
-    fun onAuth()
+    fun onJoin(event: Event) {}
+    fun onOpenParticipants(event: Event)
+    fun onOpenLikeOwners(event: Event)
+    fun onOpenSpeakers(event: Event)
 }
 
 class EventAdapter(
     private val listener: EventListener,
-    private val appAuth: AppAuth,
     private val userViewModel: UserViewModel,
     private val lifecycleOwner: LifecycleOwner
-) : PagingDataAdapter<Event, RecyclerView.ViewHolder>(EventDiffCallback()) {
+) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(EventDiffCallback()) {
+
+    override fun getItemViewType(position: Int): Int =
+        when (getItem(position)) {
+            is Ad -> R.layout.card_ad
+            is Event -> R.layout.card_event
+            is TextItemSeparator -> R.layout.card_text_item_separator
+            else -> error("unknow item type")
+        }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val event = getItem(position)
-        if (holder is EventViewHolder) {
-            event?.let { holder.bind(it) }
+        when (val item = getItem(position)) {
+            is Ad -> (holder as? AdViewHolder)?.bind(item)
+            is Event -> (holder as? EventViewHolder)?.bind(item)
+            is TextItemSeparator -> ((holder as? TextItemViewHolder)?.bind(item))
+            else -> error("unknow item type")
         }
     }
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+        when (viewType) {
+            R.layout.card_event -> {
+                val binding =
+                    CardEventBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                EventViewHolder(binding, listener, userViewModel, lifecycleOwner)
+                 }
+            R.layout.card_ad -> {
+                val binding =
+                    CardAdBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    AdEventViewHolder(binding, listener)
+                }
+            R.layout.card_text_item_separator -> {
+                val binding =
+                    CardTextItemSeparatorBinding.inflate(LayoutInflater.from(parent.context),
+                        parent,
+                        false)
+                TextItemViewHolder(binding)
+            }
+            else -> error("unknow item type $viewType")
+        }
+}
+class AdEventViewHolder(
+    private val binding: CardAdBinding,
+    private val listener: EventListener,
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
-        val binding =
-            CardEventBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        return EventViewHolder(binding, listener, appAuth, userViewModel, lifecycleOwner)
-
+    ) : RecyclerView.ViewHolder(binding.root) {
+    fun bind(ad: Ad) {
+        uploadingMedia(binding.imageAd, ad.name)
+        binding.imageAd.setOnClickListener {
+            listener.onFeedListener(ad)
+        }
     }
 }
-
 class EventViewHolder(
         private val binding: CardEventBinding,
         private val listener: EventListener,
-        private val appAuth: AppAuth,
         private val userViewModel: UserViewModel,
         private val lifecycleOwner: LifecycleOwner
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -93,8 +133,42 @@ class EventViewHolder(
             binding.apply {
                 content.text = event.content
                 published.text = event.published
-                attachment.visibility = View.GONE
+                when (event.attachment?.type) {
+                    AttachmentType.IMAGE -> {
+                        imageAttachment.visibility = View.VISIBLE
+                        uploadingAvatar(imageAttachment,event.attachment.uri)
+                        imageAttachment.setOnClickListener {
+                            listener.onFullscreenAttachment(event.attachment.uri)
+                        }
+                    }
+                    AttachmentType.AUDIO -> {
+                        audioPlay.visibility = View.VISIBLE
+                        audioPlay.setOnClickListener {
+                            listener.onFullscreenAttachment(event.attachment.uri)
+                        }
+                    }
+                    AttachmentType.VIDEO -> {
+                        videoPlay.visibility = View.VISIBLE
+                        videoPlay.setOnClickListener {
+                            listener.onFullscreenAttachment(event.attachment.uri)
+                        }
+                    }
+                    else -> {videoPlay.visibility = View.GONE
+                    videoPlay.visibility = View.GONE
+                    imageAttachment.visibility = View.GONE}
+                }
                 type.text = event.type.toString()
+
+                val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+                    .withZone( ZoneId.systemDefault() )
+
+                val date = Instant.parse(event.datetime).epochSecond
+                val now = Instant.now().epochSecond
+                val diff = (date-now)
+                val hours = (diff / 3600L)
+                val days = (hours / 24L)
+                datetime.text = formatter.format(Instant.parse(event.datetime))
+                datetimego.text = "$days   "+(R.string.days)
 
                 if (event.link!=null) {
                     link.isVisible = true
@@ -105,8 +179,24 @@ class EventViewHolder(
                     navigate.isVisible = true
                     navigate.setOnClickListener { listener.onMap(event)}
                 }
-
-                menu.visibility = if (event.ownedByMe) View.VISIBLE else View.INVISIBLE
+                join.apply {
+                    when (event.participatedByMe) {
+                        true -> {
+                            this.icon =
+                                AppCompatResources.getDrawable(root.context, R.drawable.ic_close)
+                            this.text = root.context.getString(R.string.join_button_text_2)
+                        }
+                        false -> {
+                            this.icon =
+                                AppCompatResources.getDrawable(root.context, R.drawable.ic_check)
+                            this.text = root.context.getString(R.string.join_button_text)
+                        }
+                    }
+                }
+                join.setOnClickListener {
+                    listener.onJoin(event)
+                }
+                menu.isVisible  = event.ownedByMe
                 menu.setOnClickListener {
                     PopupMenu(it.context, it).apply {
                         inflate(R.menu.object_options)
@@ -131,24 +221,15 @@ class EventViewHolder(
                         }
                     }.show()
                 }
-                if (event.attachment != null) {
-                    uploadingMedia(attachment, event.attachment.url)
-                    attachment.isVisible = true
-                    attachment.setOnClickListener {
-                        listener.onFullscreenAttachment(event.attachment.url)
-                    }
-                } else {
-                    attachment.isVisible = false
-                }
 
                 like.isChecked = event.likedByMe
                 val likersList = event.likeOwnerIds ?: emptyList()
 
-                val likersAdapter = UsersAdapter(object : UserOnInteractionListener {
-                    override fun onRemove(id: Long) = Unit
+                val usersAdapter = UsersAdapter(object : UserOnInteractionListener {
+                    override fun onSingleUser(user: User) {}
                 })
-                likers.adapter = likersAdapter
 
+                likers.adapter = usersAdapter
 
                 when (likersList.size) {
                     0 -> likers.isVisible = false
@@ -156,7 +237,7 @@ class EventViewHolder(
                         likers.isVisible = true
                         userViewModel.data.observe(lifecycleOwner) { users ->
                             val mentors = users.users.filter { it.id in event.likeOwnerIds }
-                            likersAdapter.submitList(mentors)
+                            usersAdapter.submitList(mentors)
                         }
                     }
                     else -> {
@@ -165,12 +246,7 @@ class EventViewHolder(
                     }
                 }
 
-
                 like.setOnClickListener {
-                    if (appAuth.authStateFlow.value.id == 0L) {
-                        listener.onAuth()
-                        return@setOnClickListener
-                    }
                     listener.onLikeListener(event)
                 }
                 share.setOnClickListener {
@@ -189,49 +265,55 @@ class EventViewHolder(
                 val avatarUrl = event.authorAvatar ?: ""
                 author.avatar.loadCircleCrop(avatarUrl, R.drawable.ic_avatar)
 
-                val speakersAdapter = UsersAdapter(object : UserOnInteractionListener {
-                    override fun onRemove(id: Long) = Unit
-                })
-                listSpeakers.adapter = speakersAdapter
+                binding.listSpeakers.setOnClickListener {
+                    listener.onOpenSpeakers(event)
+                }
 
-                val participantsAdapter = UsersAdapter(object : UserOnInteractionListener {
-                    override fun onRemove(id: Long) = Unit
-                })
-                listParticipants.adapter = participantsAdapter
+                binding.likers.setOnClickListener {
+                    listener.onOpenLikeOwners(event)
+                }
+
+                binding.listParticipants.setOnClickListener {
+                    listener.onOpenParticipants(event)
+                }
+
+                likers.adapter = usersAdapter
+
+                listSpeakers.adapter = usersAdapter
+
+                listParticipants.adapter = usersAdapter
 
                 userViewModel.data.observe(lifecycleOwner) { users ->
                     val speakers = users.users.filter { it.id in event.speakerIds }
-                    speakersAdapter.submitList(speakers)
+                    usersAdapter.submitList(speakers)
 
                     val participants = users.users.filter { it.id in event.participantsIds }
-                    participantsAdapter.submitList(participants)
+                    usersAdapter.submitList(participants)
                 }
-
-
             }
         }
     }
 
 
-class EventDiffCallback : DiffUtil.ItemCallback<Event>() {
+class EventDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
 
-    override fun areItemsTheSame(oldItem: Event, newItem: Event): Boolean {
+    override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: Event, newItem: Event): Boolean {
+    override fun areContentsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
         return oldItem == newItem
     }
 
-    override fun getChangePayload(oldItem: Event, newItem: Event): Any {
-        if (oldItem::class != newItem::class) {
-            return false
-        }else{
-            return  Payload(
+    override fun getChangePayload(oldItem: FeedItem, newItem: FeedItem): Any {
+        return  if (oldItem::class != newItem::class) {
+          } else if (oldItem is Event && newItem is Event) {
+            Payload(
                 liked = newItem.likedByMe.takeIf { oldItem.likedByMe != it },
                 content = newItem.content.takeIf { oldItem.content != it },
             )
+        } else {
         }
-        }
+    }
 }
 

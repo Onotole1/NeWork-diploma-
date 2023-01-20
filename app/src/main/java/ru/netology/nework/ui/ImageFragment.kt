@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
+import ru.netology.nework.BuildConfig.BASE_URL
 import ru.netology.nework.R
 import ru.netology.nework.databinding.FragmentImageBinding
 

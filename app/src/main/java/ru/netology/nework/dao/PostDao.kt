@@ -6,7 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nework.entity.PostEntity
-import ru.netology.nework.error.DbError
 
 interface PostDao {
     @Query("SELECT * FROM posts ORDER BY id DESC")

@@ -2,7 +2,7 @@ package ru.netology.nework.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ru.netology.nework.entity.EventRemoteKeyEntity
 
@@ -17,10 +17,10 @@ interface EventRemoteKeyDao {
     @Query("SELECT MIN(id) FROM EventRemoteKeyEntity")
     suspend fun min(): Long?
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(key: EventRemoteKeyEntity)
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(keys: List<EventRemoteKeyEntity>)
 
     @Query("DELETE FROM EventRemoteKeyEntity ")

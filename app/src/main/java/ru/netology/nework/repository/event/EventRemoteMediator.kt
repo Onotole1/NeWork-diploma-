@@ -10,6 +10,7 @@ import ru.netology.nework.dao.EventDao
 import ru.netology.nework.dao.EventRemoteKeyDao
 import ru.netology.nework.db.AppDb
 import ru.netology.nework.entity.*
+import ru.netology.nework.enumeration.KeyType
 import ru.netology.nework.error.ApiError
 
 
@@ -62,7 +63,7 @@ class EventRemoteMediator(
                         if (eventRemoteKeyDao.isEmpty()) {
                             eventRemoteKeyDao.insert(
                                 EventRemoteKeyEntity(
-                                    type =KeyType.BEFORE,
+                                    type = KeyType.BEFORE,
                                     id = body.last().id,
                                 )
                             )

@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/jobLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -59,8 +60,7 @@
         android:contentDescription="@string/menu"
         app:icon="@drawable/ic_menu_24"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/get_job_details"
         app:layout_constraintTop_toTopOf="@+id/Period" />
-
 
 </LinearLayout>

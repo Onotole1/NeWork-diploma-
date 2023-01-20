@@ -3,31 +3,25 @@ package ru.netology.nework.viewmodel
 import android.util.Patterns
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nework.R
-import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.Job
 import ru.netology.nework.dto.Job.Companion.emptyJob
+import ru.netology.nework.dto.User
 import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.repository.JobRepository
-import ru.netology.nework.util.RetryTypes
+import ru.netology.nework.enumeration.RetryTypes
 import ru.netology.nework.util.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class JobViewModel @Inject constructor(
     private val repository: JobRepository,
-    appAuth: AppAuth,
     userId:Long
 ) : ViewModel() {
 
-    val jobData = repository.data.asLiveData()
+    val jobData = repository.data
 
-    val authenticated = appAuth
-        .authStateFlow.map { it.id != 0L }
-        .asLiveData(Dispatchers.Default)
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
@@ -43,7 +37,7 @@ class JobViewModel @Inject constructor(
         getJobsByUserId(userId)
     }
 
-    private fun getJobsByUserId(id: Long) = viewModelScope.launch {
+    fun getJobsByUserId(id: Long) = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(loading = true)
             repository.getJobsByUserId(id)
@@ -60,6 +54,16 @@ class JobViewModel @Inject constructor(
         } catch (e: Exception) {
             _dataState.value =
                 FeedModelState(error = true, retryType = RetryTypes.REMOVE, retryId = id)
+        }
+    }
+
+    fun hideById(id: Long) = viewModelScope.launch {
+        try {
+            repository.removeById(id)
+            _dataState.value = FeedModelState()
+        } catch (e: Exception) {
+            _dataState.value =
+                FeedModelState(error = true, retryType = RetryTypes.HIDE, retryId = id)
         }
     }
 
@@ -101,12 +105,10 @@ class JobViewModel @Inject constructor(
         fun requireData(
             start: String, position: String, company: String
         ) {
-
             _dataState.value = FeedModelState(
                 emptyToDate = if (start.isBlank()) R.string.empty_field else null,
                 emptyPositionError = if (position.isBlank()) R.string.empty_field else null,
                 emptyCompanyError = if (company.isBlank()) R.string.empty_field else null,
-
                 isDataNotBlank =
                 start.isNotBlank()
                         &&
@@ -116,7 +118,7 @@ class JobViewModel @Inject constructor(
 
         }
 
-        fun save() {
+       /* fun save() {
             edited.value?.let {
                 _jobCreated.value = Unit
                 viewModelScope.launch {
@@ -129,15 +131,44 @@ class JobViewModel @Inject constructor(
                     }
                 }
             }
-        }
+        }*/
 
-    suspend fun getJobName(id: Long) {
+   /* suspend fun getJobName(id: Long) {
         try{
             repository.getJobName(id)
             _dataState.value = FeedModelState()
             edited.value = emptyJob
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = true)
+        }
+    }*/
+    fun changeStart(start: Long) {
+        edited.value = edited.value?.copy(start = start)
+    }
+
+    fun changeFinish(finish: Long? = null) {
+        edited.value = edited.value?.copy(finish = finish)
+    }
+
+    fun changeNameAndPosition(name: String, position: String) {
+        edited.value = edited.value?.copy(name = name, position = position)
+    }
+
+    fun changeLink(link: String? = null) {
+        edited.value = edited.value?.copy(link = link)
+    }
+    fun save(userId: Long) = viewModelScope.launch {
+        try {
+            _dataState.postValue(FeedModelState(loading = true))
+            edited.value?.let { job ->
+                userId.let {
+                    repository.saveJob(job,userId)
+                }
+            }
+            _dataState.postValue(FeedModelState())
+            edited.postValue(emptyJob)
+        } catch (e: Exception) {
+            FeedModelState(error = true)
         }
     }
 }

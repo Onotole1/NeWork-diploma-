@@ -1,9 +1,9 @@
 package ru.netology.nework.api
 
+import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
+import ru.netology.nework.dto.Attachment
 import ru.netology.nework.dto.FeedItem
 import ru.netology.nework.dto.Post
 
@@ -37,4 +37,6 @@ interface WallApiService :ApiService {
         @Path("id") id: Long,
         @Query("count") count: Int
     ): Response<List<Post>>
+
+
 }

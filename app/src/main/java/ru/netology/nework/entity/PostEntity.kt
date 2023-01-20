@@ -1,24 +1,23 @@
 package ru.netology.nework.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.netology.nework.dto.Attachment
-import ru.netology.nework.dto.Coordinates
 import ru.netology.nework.dto.Post
-import ru.netology.nework.dto.User
-import ru.netology.nework.enumeration.AttachmentType
 
 @Entity(tableName = "posts")
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val authorId: Long,
-    val author: String,
+    val author: String?,
     val authorAvatar: String? = null,
     val content: String,
     val published: String,
-    val coordinates: Coordinates?=null,
-    val attachment: Attachment? = null,
+    @Embedded
+    val coordinates: String?=null,
+    @Embedded
+    val attachment: AttachmentEmbeddable? = null,
     val link: String? = null,
     val likeOwnerIds:  Set<Long> = emptySet(),
     val likedByMe: Boolean =false,
@@ -37,7 +36,7 @@ data class PostEntity(
         content,
         published,
         coordinates,
-        attachment,
+        attachment = attachment?.toDto(),
         link,
         likeOwnerIds,
         likedByMe,
@@ -59,7 +58,7 @@ data class PostEntity(
                 dto.content,
                 dto.published,
                 dto.coordinates,
-                dto.attachment,
+                AttachmentEmbeddable.fromDto(dto.attachment),
                 dto.link,
                 dto.likeOwnerIds,
                 dto.likedByMe,

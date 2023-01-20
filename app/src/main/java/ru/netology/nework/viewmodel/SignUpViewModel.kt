@@ -7,8 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.netology.nework.auth.AppAuth
-import ru.netology.nework.dto.AuthState
-import ru.netology.nework.dto.User
+import ru.netology.nework.model.AuthState
 import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.repository.auth.AuthRepository
 import javax.inject.Inject
@@ -33,7 +32,7 @@ class SignUpViewModel @Inject constructor(
                 val user = repository.registrationUser(login, password, name)
                 _data.value = user
             } catch (e: Exception) {
-                _state.postValue(FeedModelState(registrationError = true))
+                _state.postValue(FeedModelState(errorRegistration = true))
             }
         }
     }

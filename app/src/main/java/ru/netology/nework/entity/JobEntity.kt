@@ -14,7 +14,8 @@ class JobEntity (
     val start: Long?,
     val finish: Long? = null,
     val link: String? = null,
-    val ownedByMe: Boolean = false
+    val ownedId: Long,
+    val ownedByMe: Boolean=false,
     ) {
         fun toDto() = Job(
             id,
@@ -23,6 +24,7 @@ class JobEntity (
             start,
             finish,
             link,
+            ownedId,
             ownedByMe
         )
 
@@ -35,6 +37,7 @@ class JobEntity (
                     dto.start,
                     dto.finish,
                     dto.link,
+                    dto.ownerId,
                     dto.ownedByMe
                 )
 

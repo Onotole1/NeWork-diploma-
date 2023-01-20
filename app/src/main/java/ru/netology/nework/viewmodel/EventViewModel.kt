@@ -5,43 +5,48 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.*
 import androidx.paging.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
+import ru.netology.nework.dto.Event.Companion.emptyEvent
 import ru.netology.nework.enumeration.AttachmentType
+import ru.netology.nework.enumeration.EventType
 import ru.netology.nework.enumeration.SeparatorTimeType
 import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.model.FileModel
 import ru.netology.nework.repository.event.EventRepository
 import ru.netology.nework.util.CurrentTimes
-import ru.netology.nework.util.RetryTypes
+import ru.netology.nework.enumeration.RetryTypes
 import ru.netology.nework.util.SingleLiveEvent
 import java.io.File
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.util.*
 
 import javax.inject.Inject
 import kotlin.random.Random
 
+@OptIn(ExperimentalCoroutinesApi::class)
+@HiltViewModel
 class EventViewModel@Inject constructor(
     @ApplicationContext private val context: Context,
     private val repository: EventRepository,
     private val auth: AppAuth,
-    private val currentTime: CurrentTimes
+    private val currentTime: CurrentTimes,
+    private val calendar: Calendar,
 ) : ViewModel() {
 
     private val cached
         get() = repository.data.cachedIn(viewModelScope)
 
     @SuppressLint("SimpleDateFormat")
-
     val data: Flow<PagingData<FeedItem>> = auth.authStateFlow.
     flatMapLatest { (myId, _) ->
             cached.map { pagingData ->
@@ -94,6 +99,9 @@ class EventViewModel@Inject constructor(
             }
         }
 
+    val eventById: LiveData<Event>
+        get() = _eventById
+    private val _eventById = MutableLiveData<Event>()
 
     val authenticated = auth
         .authStateFlow.map { it.id != 0L }
@@ -103,9 +111,7 @@ class EventViewModel@Inject constructor(
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    private val _edited = MutableLiveData(Event.emptyEvent)
-    val edited: LiveData<Event>
-        get() = _edited
+    val edited = MutableLiveData(emptyEvent)
 
     private val _eventCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
@@ -116,13 +122,17 @@ class EventViewModel@Inject constructor(
     val file: LiveData<FileModel>
         get() = _file
 
+    val datetime = MutableLiveData(OffsetDateTime.MIN)
+    var type = EventType.NONE
+
     private var _speakerIds: MutableSet<Long> = mutableSetOf()
 
     fun edit(event: Event) = viewModelScope.launch {
-        _edited.value = event
+        edited.value = event
     }
+
     fun cancelEdit() = viewModelScope.launch {
-        _edited.value = Event.emptyEvent
+        edited.value = Event.emptyEvent
     }
 
     private val hideEvents = mutableSetOf<Event>()
@@ -130,6 +140,7 @@ class EventViewModel@Inject constructor(
     fun hideEvent(event: Event) {
         hideEvents.add(event)
     }
+
     private val scope = MainScope()
 
     init {
@@ -139,7 +150,7 @@ class EventViewModel@Inject constructor(
     fun changeFile(uri: Uri?, type: AttachmentType?) {
         _file.value = FileModel(uri, type=type)
         edited.value?.let {
-            _edited.value = it.copy(
+            edited.value = it.copy(
                 attachment = null
             )
         }
@@ -154,9 +165,8 @@ class EventViewModel@Inject constructor(
     }
 
     fun forAuthenticated() {
-        _edited.postValue(Event.emptyEvent.copy(authorId = auth.authStateFlow.value.id))
+        edited.postValue(Event.emptyEvent.copy(authorId = auth.authStateFlow.value.id))
     }
-
 
     fun loadEvents() = viewModelScope.launch {
         try {
@@ -164,33 +174,32 @@ class EventViewModel@Inject constructor(
             repository.getAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
-            _dataState.value = FeedModelState(error = true)
+            _dataState.value = FeedModelState(error = true, retryType = RetryTypes.LOAD)
         }
     }
 
     fun likeById(id: Long, likedByMe: Boolean) = viewModelScope.launch {
         try {
-            repository.likeById(id, likedByMe)
+            repository.likeEventById(id, likedByMe)
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
             _dataState.value =
-                FeedModelState(error = true, retryType = RetryTypes.REMOVE, retryId = id)
+                FeedModelState(error = true, retryType = RetryTypes.LIKE, retryId = id)
         }
     }
 
-    fun refreshPosts() = viewModelScope.launch {
+    fun refreshEvents() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(refreshing = true)
             repository.getAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
-            _dataState.value = FeedModelState(error = true)
+            _dataState.value =   FeedModelState(error = true, retryType = RetryTypes.RETRY)
         }
     }
 
     fun shareById(id: Long) = viewModelScope.launch {
         repository.shareById(id)
-
     }
 
     fun changeContent(content: String) {
@@ -198,9 +207,29 @@ class EventViewModel@Inject constructor(
         if (edited.value?.content == text) {
             return
         }
-        _edited.value = edited.value?.copy(content = text)
+        edited.value = edited.value?.copy(content = text)
     }
-
+    fun changeEvent(content: String,
+                    link: String?,
+                    coords: Coordinates?
+    ) {
+        val text = content.trim()
+        if (edited.value?.content == text) {
+            return
+        }
+        edited.value = edited.value?.copy(content = text,
+            datetime = datetime.value.toString(),
+            type = type,
+            link = link,
+            coordinates = coords
+        )
+    }
+    fun changeContent(event: Event) {
+        if (edited.value == event) {
+            return
+        }
+        edited.value = event.copy(published = calendar.time.time.toString())
+    }
 
     fun save() {
         edited.value?.let {
@@ -219,11 +248,11 @@ class EventViewModel@Inject constructor(
                     }
                     _dataState.value = FeedModelState()
                 } catch (e: Exception) {
-                    _dataState.value = FeedModelState(error = true)
+                    _dataState.value = FeedModelState(error = true, retryType = RetryTypes.SAVE)
                 }
             }
         }
-        _edited.value = Event.emptyEvent
+        edited.value = Event.emptyEvent
         _file.value = noFile
     }
 
@@ -235,10 +264,12 @@ class EventViewModel@Inject constructor(
     fun retrySave(event: Event?) {
         viewModelScope.launch {
             try {
+                _dataState.postValue(FeedModelState(loading = true))
                 if (event != null) {
                     repository.save(event)
                     loadEvents()
                 }
+                _dataState.postValue(FeedModelState())
             } catch (e: Exception) {
                 _dataState.value =
                     FeedModelState(error = true, retryType = RetryTypes.SAVE, retryEvent = event)
@@ -246,10 +277,22 @@ class EventViewModel@Inject constructor(
         }
     }
 
+    fun getEventById(id: Long) = viewModelScope.launch {
+        try {
+            val event = repository.getEventById(id)
+
+            _eventById.postValue(event.copy(published = convertTimeFormat(event.published), datetime = convertTimeFormat(event.datetime)))
+
+        } catch (e: Exception) {
+
+        }
+    }
+
     fun removeById(id: Long) = viewModelScope.launch {
         try {
+            _dataState.postValue(FeedModelState(loading = true))
             repository.removeById(id)
-            _dataState.value = FeedModelState()
+            _dataState.postValue(FeedModelState())
         } catch (e: Exception) {
             _dataState.value =
                 FeedModelState(error = true, retryType = RetryTypes.REMOVE, retryId = id)
@@ -270,7 +313,7 @@ class EventViewModel@Inject constructor(
     }
 
     fun saveSpeaker() {
-        _edited.value = edited.value?.copy(speakerIds = _speakerIds)
+        edited.value = edited.value?.copy(speakerIds = _speakerIds)
         clearSpeaker()
     }
 
@@ -279,16 +322,14 @@ class EventViewModel@Inject constructor(
     }
 
     fun saveCoordinates(latitude: Double, longitude: Double) {
-        _edited.value = edited.value?.copy(coordinates = Coordinates(latitude, longitude))
+        edited.value = edited.value?.copy(coordinates = Coordinates(latitude, longitude))
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        scope.cancel()
-    }
     fun joinById(id: Long) = viewModelScope.launch {
         try {
+            _dataState.postValue(FeedModelState(loading = true))
             repository.joinById(id)
+            _dataState.postValue(FeedModelState())
         } catch (e: Exception) {
             _dataState.value =
                 FeedModelState(error = true, retryType = RetryTypes.PARTICIPATE, retryId = id)
@@ -297,10 +338,41 @@ class EventViewModel@Inject constructor(
 
     fun denyById(id: Long) = viewModelScope.launch {
         try {
-            repository.denyById(id)
+            _dataState.postValue(FeedModelState(loading = true))
+            repository.leaveById(id)
+            _dataState.postValue(FeedModelState())
         } catch (e: Exception) {
             _dataState.value =
                 FeedModelState(error = true, retryType = RetryTypes.UNPARTICIPATE, retryId = id)
         }
     }
+
+    private fun convertTimeFormat(timeString: String): String {
+        return try {
+            val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+                .parse(timeString.replace("T", " ").replace("Z", ""))
+            SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)
+        } catch (e: Exception) {
+            timeString
+        }
+    }
+    fun changeDatetime(datetime: Long) {
+        if (datetime < 0) {
+            return
+        }
+        edited.value = edited.value?.copy(datetime = Instant.ofEpochMilli(datetime).toString())
+    }
+
+    fun changeEventType(type: String) {
+        when (type) {
+            EventType.OFFLINE.toString() -> edited.value = edited.value?.copy(type = EventType.OFFLINE)
+            else -> edited.value = edited.value?.copy(type = EventType.ONLINE)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        scope.cancel()
+    }
+
 }

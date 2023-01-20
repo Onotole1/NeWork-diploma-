@@ -9,21 +9,21 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
-import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.CardJobBinding
 import ru.netology.nework.dto.Job
 
 
 interface JobOnInteractionListener  {
+   //fun onSingleJob(job: Job)
     fun onEditListener(job: Job){}
     fun onRemoveListener(job: Job){}
     fun onHideListener(job: Job){}
-    fun onAuth()
 }
-abstract class JobsAdapter (
+
+class JobsAdapter (
     private val listener: JobOnInteractionListener,
-    private val appAuth: AppAuth
-    ) : ListAdapter<Job, JobViewHolder>(JobDiffCallback()) {
+) : ListAdapter<Job, JobViewHolder>(JobDiffCallback()) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobViewHolder {
         val binding =
             CardJobBinding.inflate(
@@ -31,7 +31,7 @@ abstract class JobsAdapter (
                 parent,
                 false
             )
-        return JobViewHolder(binding, listener, appAuth)
+        return JobViewHolder(binding, listener)
     }
     override fun onBindViewHolder(
         holder: JobViewHolder,
@@ -45,7 +45,6 @@ abstract class JobsAdapter (
 class JobViewHolder(
     private val binding: CardJobBinding,
     private val listener: JobOnInteractionListener,
-    private val appAuth: AppAuth
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(job: Job) {
         binding.apply {
@@ -57,11 +56,14 @@ class JobViewHolder(
                 link.text = job.link
             }else { link.isVisible = false}
 
-            menu.visibility = if (job.ownedByMe) View.VISIBLE else View.INVISIBLE
+            /*getJobDetails.setOnClickListener {
+                listener.onSingleJob(job)
+            }*/
+
+            menu.isVisible = job.ownedByMe
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.object_options)
-                    menu.setGroupVisible(R.id.my_object_menu, job.ownedByMe)
                     setOnMenuItemClickListener { item ->
                         when (item.itemId) {
                             R.id.object_remove -> {
@@ -86,8 +88,8 @@ class JobViewHolder(
     }
 }
 
+class JobDiffCallback() : DiffUtil.ItemCallback<Job>() {
 
-class JobDiffCallback: DiffUtil.ItemCallback<Job>() {
     override fun areItemsTheSame(oldItem: Job, newItem: Job): Boolean {
         return oldItem.id == newItem.id
     }

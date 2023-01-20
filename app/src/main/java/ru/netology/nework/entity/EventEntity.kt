@@ -1,9 +1,9 @@
 package ru.netology.nework.entity
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import ru.netology.nework.dto.Attachment
-import ru.netology.nework.dto.Coordinates
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.room.*
+import ru.netology.nework.dao.Converters
 import ru.netology.nework.dto.Event
 import ru.netology.nework.enumeration.EventType
 
@@ -13,19 +13,23 @@ class EventEntity(
     @PrimaryKey(autoGenerate = true)
      val id: Long,
     val authorId: Long,
-    val author: String,
+    val author: String?,
     val authorAvatar: String? = null,
     val content: String,
     val datetime: String,
     val published: String,
-    val coordinates: Coordinates?=null,
+    @Embedded
+    val coordinates: String?=null,
+    @TypeConverters(Converters::class)
+    @ColumnInfo(name = "_type")
     val type: EventType,
-    val attachment: Attachment? = null,
+    @Embedded
+    val attachment: AttachmentEmbeddable? = null,
     val link: String? = null,
-    val likeOwnerIds:  Set<Long> = emptySet(),
+    val likeOwnerIds:  MutableSet<Long> = mutableSetOf(),
     val likedByMe: Boolean =false,
     val speakerIds: MutableSet<Long> = mutableSetOf(),
-    val participantsIds: Set<Long> = emptySet(),
+    val participantsIds: MutableSet<Long> = mutableSetOf(),
     val participatedByMe: Boolean=false,
     val ownedByMe: Boolean=false,
     ){
@@ -39,7 +43,7 @@ class EventEntity(
             published,
             coordinates,
             type,
-            attachment,
+            attachment = attachment?.toDto(),
             link,
             likeOwnerIds,
             likedByMe,
@@ -61,7 +65,7 @@ class EventEntity(
                     dto.published,
                     dto.coordinates,
                     dto.type,
-                    dto.attachment,
+                    AttachmentEmbeddable.fromDto(dto.attachment),
                     dto.link,
                     dto.likeOwnerIds,
                     dto.likedByMe,

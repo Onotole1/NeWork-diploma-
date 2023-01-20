@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context=".ui.ProfileFragment">
+    tools:context=".ui.user.ProfileFragment">
 
     <LinearLayout
          android:id="@+id/linear_layout"
@@ -15,13 +15,13 @@
             android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/user"
+                android:id="@+id/userCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/commonSpacingLarge">
 
             <ImageView
-                android:id="@+id/avatar"
+                android:id="@+id/userAvatar"
                 android:layout_width="@dimen/commonSpacingXSLarge"
                 android:layout_height="@dimen/commonSpacingXSLarge"
                 android:contentDescription="@string/avatar_description"
@@ -41,10 +41,10 @@
                 android:textSize="@dimen/textSize"
                 android:textStyle="bold"
                 android:gravity="center_horizontal|center_vertical"
-                app:layout_constraintBottom_toBottomOf="@id/avatar"
-                app:layout_constraintStart_toEndOf="@id/avatar"
+                app:layout_constraintBottom_toBottomOf="@id/userAvatar"
+                app:layout_constraintStart_toEndOf="@id/userAvatar"
                 app:layout_constraintEnd_toStartOf="@+id/menu"
-                app:layout_constraintTop_toTopOf="@+id/avatar"
+                app:layout_constraintTop_toTopOf="@+id/userAvatar"
                 app:layout_constraintVertical_chainStyle="packed"
                 tools:text="@string/user_name" />
 
@@ -60,7 +60,7 @@
             android:gravity="center_horizontal|center_vertical"
             app:icon="@drawable/ic_login_24"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/avatar"
+            app:layout_constraintTop_toTopOf="@+id/userAvatar"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <com.google.android.material.button.MaterialButton
@@ -73,7 +73,7 @@
             android:gravity="center_horizontal|center_vertical"
             app:icon="@drawable/ic_menu_24"
             app:layout_constraintEnd_toStartOf="@+id/buttonLogout"
-            app:layout_constraintTop_toTopOf="@+id/avatar"
+            app:layout_constraintTop_toTopOf="@+id/userAvatar"
             app:layout_constraintVertical_chainStyle="packed"
             tools:ignore="DuplicateClickableBoundsCheck">
 
@@ -84,7 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
-                app:constraint_referenced_ids="avatar,buttonLogout,user_name" />
+                app:constraint_referenced_ids="userAvatar,buttonLogout,user_name" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -148,4 +148,55 @@
             tools:listitem="@layout/card_post" />
     </LinearLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="fabAddJob,fabAddEvent,fabAddPost" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:src="@drawable/ic_add_24"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="fab" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabAddPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/title_post"
+        app:icon="@drawable/ic_add_24"
+        app:layout_constraintBottom_toTopOf="@id/fab"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabAddEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/title_event"
+        app:icon="@drawable/ic_add_24"
+        app:layout_constraintBottom_toTopOf="@id/fabAddPost"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabAddJob"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/title_job"
+        app:icon="@drawable/ic_add_24"
+        app:layout_constraintBottom_toTopOf="@id/fabAddEvent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

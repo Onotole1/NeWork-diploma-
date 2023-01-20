@@ -1,13 +1,14 @@
 package ru.netology.nework.viewmodel
 
 import android.net.Uri
-import androidx.core.net.toFile
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
+import ru.netology.nework.enumeration.AttachmentType
+import ru.netology.nework.model.AuthState
 import ru.netology.nework.model.LoginFormState
 import ru.netology.nework.model.FileModel
 import ru.netology.nework.repository.auth.AuthRepository
@@ -38,8 +39,8 @@ class AuthViewModel @Inject constructor(
     val avatar: LiveData<FileModel>
         get() = _avatar
 
-    fun getToken(login: String, pass: String): PushToken {
-        var token:PushToken= nullToken
+    fun getToken(login: String, pass: String): String {
+        var token:String = ""
         viewModelScope.launch {
                 try {
                    val user = repository.updateUser(login, pass)
@@ -90,14 +91,25 @@ class AuthViewModel @Inject constructor(
                 _loginForm.postValue(LoginFormState(errorAuth = true))
             }
         }
-
     }
+        fun loginDataChanged(password: String) {
+            if (!isPasswordValid(password)) {
+                _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
+            } else {
+                _loginForm.value = LoginFormState(isDataValid = true)
+            }
+        }
+
 
     private fun isPasswordValid(password: String): Boolean {
         return password.length >= 5
     }
     fun changeAvatar(uri: Uri?) = viewModelScope.launch {
-        _avatar.value = FileModel(uri, uri?.toFile())
+        _avatar.value = FileModel(uri, type=AttachmentType.IMAGE)
     }
+
+    val authenticated: Boolean
+        get() = auth.authStateFlow.value.id != 0L
+
 
 }

@@ -15,7 +15,3 @@ data class Attachment(
         }
     }
 }
-
-data class MediaUpload(val uri: Uri)
-
-data class MediaUploadFile(val file: File)

@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/postLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
@@ -133,8 +134,8 @@
             android:layout_marginTop="@dimen/marginStart"
             android:layout_marginBottom="@dimen/marginStart"
             android:text="@string/link"
+            android:visibility="gone"
             android:textStyle="bold"
-            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/mentors" />
 
@@ -145,8 +146,8 @@
             android:layout_margin="@dimen/commonSpacingSmall"
             android:autoLink="web"
             android:ellipsize="end"
-            android:visibility="visible"
             android:focusable="true"
+            android:visibility="gone"
             android:lineSpacingExtra="@dimen/commonSpacingSmall"
             android:linksClickable="true"
             app:layout_constraintEnd_toEndOf="parent"
@@ -162,7 +163,7 @@
             android:layout_gravity="center_horizontal"
             app:icon="@drawable/ic_location"
             android:layout_marginStart="@dimen/marginStart"
-            app:layout_constraintBottom_toTopOf="@id/attachment"
+            app:layout_constraintBottom_toTopOf="@id/imageAttachment"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mentors"
             tools:ignore="DuplicateClickableBoundsCheck"
@@ -176,17 +177,39 @@
             app:constraint_referenced_ids="avatar,published,menu" />
 
         <ImageView
-            android:id="@+id/attachment"
+            android:id="@+id/imageAttachment"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/attachment"
+            android:layout_height="match_parent"
+            android:scaleType="matrix"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/downer_menu_barrier"
+            app:layout_constraintBottom_toTopOf="@id/coordinates"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/coordinates"
-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+            app:layout_constraintTop_toBottomOf="@+id/content"
+            tools:ignore="ContentDescription" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/audioPlay"
+            style="@style/Widget.AppTheme.CheckButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/audio"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/imageAttachment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/videoPlay"
+            style="@style/Widget.AppTheme.CheckButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/video"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/audioPlay"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/downer_menu_barrier"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/downer_menu_barrier"
@@ -194,7 +217,7 @@
             android:layout_height="wrap_content"
             app:barrierDirection="bottom"
             app:barrierMargin="@dimen/commonSpacingMedium"
-            app:constraint_referenced_ids="content, attachment" />
+            app:constraint_referenced_ids="content, videoPlay" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/like"

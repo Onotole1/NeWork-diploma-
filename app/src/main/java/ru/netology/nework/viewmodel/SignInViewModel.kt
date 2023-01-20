@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.netology.nework.auth.AppAuth
-import ru.netology.nework.dto.AuthState
-import ru.netology.nework.dto.User
+import ru.netology.nework.model.AuthState
 import ru.netology.nework.model.FeedModelState
 import ru.netology.nework.repository.auth.AuthRepository
 
@@ -36,4 +35,5 @@ class SignInViewModel   @Inject constructor(
             }
         }
     }
+
 }

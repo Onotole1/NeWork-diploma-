@@ -4,12 +4,13 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
-import ru.netology.nework.dto.AuthState
+import ru.netology.nework.dto.Attachment
 import ru.netology.nework.dto.PushToken
 import ru.netology.nework.dto.User
 import ru.netology.nework.entity.UserEntity
+import ru.netology.nework.model.AuthState
 
-interface UserApiService :ApiService {
+interface UserApiService:ApiService {
 
         //Юзеры
         @GET("users")
@@ -44,5 +45,11 @@ interface UserApiService :ApiService {
 
         @POST("users/push-tokens")
         suspend fun sendPushToken(@Body pushToken: PushToken): Response<Unit>
+
+    @Multipart
+    @POST("media")
+    suspend fun upload(
+        @Part part: MultipartBody.Part,
+    ): Response<Attachment>
     }
 

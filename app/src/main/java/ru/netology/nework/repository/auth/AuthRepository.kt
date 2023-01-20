@@ -4,10 +4,9 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import ru.netology.nework.api.UserApiService
-import ru.netology.nework.dto.MediaUpload
 import ru.netology.nework.error.*
-import ru.netology.nework.dto.AuthState
 import ru.netology.nework.dto.MediaUploadFile
+import ru.netology.nework.model.AuthState
 import ru.netology.nework.repository.checkResponse
 import java.io.IOException
 import javax.inject.Inject

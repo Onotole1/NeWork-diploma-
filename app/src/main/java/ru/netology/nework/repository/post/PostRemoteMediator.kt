@@ -9,7 +9,7 @@ import ru.netology.nework.api.PostApiService
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.db.AppDb
-import ru.netology.nework.entity.KeyType
+import ru.netology.nework.enumeration.KeyType
 import ru.netology.nework.entity.PostEntity
 import ru.netology.nework.entity.PostRemoteKeyEntity
 import ru.netology.nework.entity.toEntity
@@ -65,7 +65,7 @@ class PostRemoteMediator(
                         if (postRemoteKeyDao.isEmpty()) {
                             postRemoteKeyDao.insert(
                                 PostRemoteKeyEntity(
-                                    type =KeyType.BEFORE,
+                                    type = KeyType.BEFORE,
                                     id = body.last().id,
                                 )
                             )
