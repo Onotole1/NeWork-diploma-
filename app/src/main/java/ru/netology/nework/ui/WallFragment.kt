@@ -84,8 +84,8 @@ class WallFragment : Fragment() {
 
             override fun onMap(post: Post) {
                 val bundle = Bundle().apply {
-                    post.coordinates?.lat?.let { putDouble("lat", it) }
-                    post.coordinates?.long?.let { putDouble("lng", it) }
+                    post.coordinates?.latitude?.let { putDouble("lat", it) }
+                    post.coordinates?.longitude?.let { putDouble("lng", it) }
                 }
                 findNavController().navigate(R.id.action_navigation_main_to_mapFragment, bundle)
             }
@@ -133,8 +133,8 @@ class WallFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putString("content", event.content)
                     putString("dateTime", event.datetime)
-                    event.coordinates?.lat?.let { putDouble("lat", it) }
-                    event.coordinates?.long?.let { putDouble("lng", it) }
+                    event.coordinates?.latitude?.let { putDouble("lat", it) }
+                    event.coordinates?.longitude?.let { putDouble("lng", it) }
                     putString("attachment", event.attachment?.uri)
                     putString("attachmentType", event.attachment?.type?.name.toString())
                 }
@@ -195,8 +195,8 @@ class WallFragment : Fragment() {
 
             override fun onMap(event: Event) {
                 val bundle = Bundle().apply {
-                    event.coordinates?.lat?.let { putDouble("lat", it) }
-                    event.coordinates?.long?.let { putDouble("lng", it) }
+                    event.coordinates?.latitude?.let { putDouble("lat", it) }
+                    event.coordinates?.longitude?.let { putDouble("lng", it) }
                 }
                 findNavController().navigate(R.id.action_navigation_main_to_mapFragment, bundle)
             }

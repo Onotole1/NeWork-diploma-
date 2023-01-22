@@ -60,8 +60,8 @@ class CardEventFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putString("content", event.content)
                     putString("dateTime", event.datetime)
-                    event.coordinates?.lat?.let { putDouble("lat", it) }
-                    event.coordinates?.long?.let { putDouble("lng", it) }
+                    event.coordinates?.latitude?.let { putDouble("lat", it) }
+                    event.coordinates?.longitude?.let { putDouble("lng", it) }
                     putString("attachment", event.attachment?.uri)
                     putString("attachmentType", event.attachment?.type?.name.toString())
                 }
@@ -122,8 +122,8 @@ class CardEventFragment : Fragment() {
 
             override fun onMap(event: Event) {
                 val bundle = Bundle().apply {
-                    event.coordinates?.lat?.let { putDouble("lat", it) }
-                    event.coordinates?.long?.let { putDouble("lng", it) }
+                    event.coordinates?.latitude?.let { putDouble("lat", it) }
+                    event.coordinates?.longitude?.let { putDouble("lng", it) }
                 }
                 findNavController().navigate(R.id.action_eventsFragment_to_mapFragment, bundle)
             }

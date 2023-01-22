@@ -1,14 +1,17 @@
 package ru.netology.nework.dto
 
+import com.google.gson.annotations.SerializedName
+
 data class Post(
     override val id: Long,
     val authorId: Long,
     val author: String?,
-    val authorAvatar: String?=null,
+    val authorAvatar: String? = null,
     val content: String,
     val published: String,
     /*координаты события*/
-    val coordinates: String? =null,
+    @SerializedName("coords")
+    val coordinates: Coordinates? = null,
     val attachment: Attachment? = null,
     /**
      * Ссылка на связанный ресурс, например:
@@ -20,17 +23,16 @@ data class Post(
      */
     val link: String? = null,
     /*кто лайкнул*/
-    val likeOwnerIds:  Set<Long> = emptySet(),
-    val likedByMe: Boolean =false,
+    val likeOwnerIds: Set<Long> = emptySet(),
+    val likedByMe: Boolean = false,
     /*кто упоминается*/
     val mentionIds: Set<Long> = emptySet(),
-    val mentionedMe: Boolean =false,
-    val ownedByMe: Boolean =false,
+    val mentionedMe: Boolean = false,
+    val ownedByMe: Boolean = false,
     val mentorsNames: List<String?>? = null,
     val jobs: List<String?>? = null
 
-) : FeedItem
-{
+) : FeedItem {
     companion object {
         val emptyPost = Post(
             id = 0,

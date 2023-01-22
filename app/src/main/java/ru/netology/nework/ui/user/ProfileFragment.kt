@@ -124,8 +124,8 @@ class ProfileFragment: Fragment() {
 
             override fun onMap(post: Post) {
                 val bundle = Bundle().apply {
-                    post.coordinates?.lat?.let { putDouble("lat", it) }
-                    post.coordinates?.long?.let { putDouble("lng", it) }
+                    post.coordinates?.latitude?.let { putDouble("lat", it) }
+                    post.coordinates?.longitude?.let { putDouble("lng", it) }
                 }
                 findNavController().navigate(R.id.mapFragment, bundle)
             }
